@@ -1,4 +1,5 @@
 const {TeamSpeak} = require("ts3-nodejs-library");
+import { TeamSpeak, QueryProtocol } from "./src/TeamSpeak"
 
 const hostIP = "47.41.254.91";
 const qPort = 10011;
@@ -12,6 +13,27 @@ const teamspeak = new TeamSpeak({
   password: "xJUE7Mue",
   nickname: "Gamer"
 });
+
+
+/*
+TeamSpeak.connect({
+  host: hostIP,
+  queryport: qPort,
+  serverport: sPort,
+  protocol: QueryProtocol.RAW,
+  username: "BR1Teamspeak",
+  password: "xJUE7Mue",
+  nickname: "ServerMonitor"
+}).then(async teamspeak => {
+
+  teamspeak.on("close", async () => {
+    console.log("disconnected, trying to reconnect...")
+    await teamspeak.reconnect(-1, 1000)
+    console.log("reconnected!")
+  })
+
+})
+*/
 
 teamspeak.on("ready", async () => {
   console.log(`Ready on ${hostIP}:${sPort}`);
