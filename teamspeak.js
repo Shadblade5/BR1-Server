@@ -1,4 +1,4 @@
-import { TeamSpeak, QueryProtocol } from "./ts3-nodejs-library/src/TeamSpeak"
+//import { TeamSpeak, QueryProtocol } from "./ts3-nodejs-library/src/TeamSpeak"
 const {TeamSpeak} = require("ts3-nodejs-library");
 
 const mysql = require('mysql');

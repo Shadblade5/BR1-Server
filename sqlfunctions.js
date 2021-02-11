@@ -1,11 +1,11 @@
 require('dotenv').config();
 const SQLPASS = process.env.SQLPASS
 const mysql = require('mysql');
-console.log(SQLPASS)
+
 let connection = mysql.createConnection({
     host: 'br1.ddns.us',
     user: 'Server',
-    password: '${SQLPASS}',
+    password: `${SQLPASS}`,
     database: 'br1'
 });
 
