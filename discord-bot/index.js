@@ -1,5 +1,8 @@
+const mysql = require('mysql');
 const {TeamSpeak} = require("ts3-nodejs-library");
 import { TeamSpeak, QueryProtocol } from "./src/TeamSpeak"
+const SQLPASS = process.env.SQLPASS
+const TS3PASS = process.env.TS3PASS
 
 const hostIP = "47.41.254.91";
 const qPort = 10011;
@@ -10,10 +13,16 @@ const teamspeak = new TeamSpeak({
   queryport: qPort,
   serverport: sPort,
   username: "BR1Teamspeak",
-  password: "xJUE7Mue",
-  nickname: "Gamer"
+  password: TS3PASS,
+  nickname: "Server Monitor"
 });
 
+let connection = mysql.createConnection({
+    host: 'br1.ddns.us',
+    user: 'Server',
+    password: SQLPASS,
+    database: 'br1'
+});
 
 /*
 TeamSpeak.connect({
@@ -57,3 +66,29 @@ teamspeak.on("error", e => {
 //     console.log(`${txt.invoker.nickname}: "${txt.msg}"`);
 //   }
 // })
+
+
+var config = {
+    user: 'root',
+    password: 'mypassword',
+    server: 'localhost',
+    database: 'SchoolDB'
+};
+
+
+let stream = fs.createReadStream("bezkoder.csv");
+let csvData = [];
+let csvStream = fastcsv
+  .parse()
+  .on("data", function(data) {
+    csvData.push(data);
+  })
+  .on("end", function() {
+    // remove the first line: header
+    csvData.shift();
+
+    // connect to the MySQL database
+    // save csvData
+  });
+
+stream.pipe(csvStream);
