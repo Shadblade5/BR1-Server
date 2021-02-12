@@ -12,9 +12,9 @@ bot.on('ready', () => {
   console.info(`Logged in as ${bot.user.tag}!`);
 });
 function commandinfo(msg,command){
-  const rankup = '\n!rankup\n  Usage: !rankup <@user> <optional rank> defaults to next rank';
-  const certify = '\n!certify\n  Usage: !certify <@user> <certifcation>'
-  msg.channel.send('Available commands:')
+  const rankup = '\nUsage: !rankup <@user> <optional rank> *Defaults to next rank*';
+  const certify = '\n  Usage: !certify <@user> <certifcation>'
+
   switch(command){
     case 'rankup':
       msg.channel.send(rankup);
@@ -23,7 +23,10 @@ function commandinfo(msg,command){
     msg.channel.send(certify);
     break;
     default:
+      msg.channel.send('Available commands:')
+      msg.channel.send('\nCommand: !rankup')
       msg.channel.send(rankup);
+      msg.channel.send('\nCommand: !certify')
       msg.channel.send(certify);
     }
 return
@@ -52,6 +55,7 @@ function rankup(msg,args,taggedUser){
   if(taggedUser==undefined)
   {
     msg.reply("No user tagged.")
+    commandinfo(msg,'rankup');
     return;
   }
   if(args.length<1){
@@ -78,6 +82,7 @@ function certify(msg,args,taggedUser){
   if(taggedUser==undefined)
   {
     msg.reply("No user tagged.")
+    commandinfo(msg,'certify');
     return;
   }
   if(args.length<2){
