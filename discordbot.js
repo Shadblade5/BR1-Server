@@ -1,5 +1,5 @@
 require('dotenv').config();
-require('./sqlfunctions');
+const sql = require('./sqlfunctions');
 //require('./teamspeak');
 const Discord = require('discord.js');
 const bot = new Discord.Client();
@@ -36,8 +36,6 @@ function commandinfo(msg,command){
 return
 }
 
-
-
 function getUserFromMention(mention) {
 	if (!mention) return;
 
@@ -51,12 +49,12 @@ function getUserFromMention(mention) {
 		return bot.users.cache.get(mention);
 	}
 }
-function getUserId(username){
-  	if (!username) return;
-  return username.id
+function getDiscordID(user){
+  	if (!user) return;
+  return user.id
 }
 
-function rankup(msg,args,taggedUser){
+async function rankup(msg,args,taggedUser){
 
   //Query SQL and update ranked
   if(taggedUser==undefined)
@@ -70,15 +68,25 @@ function rankup(msg,args,taggedUser){
     commandinfo(msg,'rankup');
   }
   //successfully input command, now get the cases
-  const currentRank = getrank()
+
+  var DiscordID = getDiscordID(taggedUser);
+
   if(!args[1])
   {
-    msg.reply(`User: ${taggedUser.username} was ranked up to the next rank`);
+    var currentRank = await sql.getRank(DiscordID);
+    var numRank = ranks.indexOf(currentRank)
+    console.log(numRank)
+    msg.reply(`${taggedUser.username} was ranked up to ${ranks[numRank+1]}`);
+    await sql.updateRank(DiscordID,ranks[numRank+1])
     //rankup to next rank
     return;
   }
   if(ranks.includes(args[1]))
   {
+    var newRank = args[1]
+    var numRank = ranks.indexOf(newRank)
+    msg.reply(`${taggedUser.username} was ranked up to ${ranks[numRank]}`);
+    sql.updateRank(DiscordID,ranks[numRank])
     //send rank to sql args[1]
     return;
   }
@@ -130,7 +138,7 @@ bot.on('message', msg => {
   const command = split[0];
   const args = split.slice(1);
   var taggedUser = getUserFromMention(args[0])
-  var userId = getUserId(taggedUser);
+  var discordId = getDiscordID(taggedUser);
   switch(command){
 
       case 'info':
