@@ -1,4 +1,6 @@
 require('dotenv').config();
+require('./sqlfunctions');
+//require('./teamspeak');
 const Discord = require('discord.js');
 const bot = new Discord.Client();
 const TOKEN = process.env.TOKEN;
@@ -23,14 +25,19 @@ function commandinfo(msg,command){
     msg.channel.send(certify);
     break;
     default:
-      msg.channel.send('Available commands:')
-      msg.channel.send('\nCommand: !rankup')
+      msg.channel.send('Available commands:\nCommand: !rankup' + rankup + '\nCommand: !certify'+ certify + ' ')
+      /*
+      msg.channel.send('')
       msg.channel.send(rankup);
       msg.channel.send('\nCommand: !certify')
       msg.channel.send(certify);
+      */
     }
 return
 }
+
+
+
 function getUserFromMention(mention) {
 	if (!mention) return;
 
@@ -62,6 +69,8 @@ function rankup(msg,args,taggedUser){
     msg.reply("Not enough arguments provided.")
     commandinfo(msg,'rankup');
   }
+  //successfully input command, now get the cases
+  const currentRank = getrank()
   if(!args[1])
   {
     msg.reply(`User: ${taggedUser.username} was ranked up to the next rank`);
@@ -78,6 +87,9 @@ function rankup(msg,args,taggedUser){
   msg.channel.send(`${ranks}`);
   }
 }
+
+
+
 function certify(msg,args,taggedUser){
   if(taggedUser==undefined)
   {
@@ -107,6 +119,8 @@ function certify(msg,args,taggedUser){
 
   return;
 }
+
+
 
 bot.on('message', msg => {
   if (!msg.content.startsWith(prefix)) return;

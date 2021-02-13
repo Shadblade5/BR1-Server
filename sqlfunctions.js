@@ -18,10 +18,17 @@ connection.connect(function(err) {
   //var sql = "UPDATE customers SET address = 'Canyon 123' WHERE address = 'Valley 345'";
   console.log('Connected to the MySQL server.');
 });
-var sql = 'SELECT Rank FROM master WHERE DiscordID = '+ `${DiscordID}`;
-console.log(sql);
 
-connection.query(sql ,function (err, result) {
-  if (err) throw err;
-  console.log(result);
-});
+function getRank(DiscordID){
+const qrank = 'SELECT Rank FROM master WHERE DiscordID = '+ `${DiscordID}`;
+return  query(qrank);
+}
+
+function query(sql){
+
+  connection.query(sql ,function (err, result) {
+    if (err) throw err;
+    console.log(result);
+  });
+  return result;
+}
