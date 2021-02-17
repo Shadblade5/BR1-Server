@@ -4,12 +4,14 @@ const sql = require('./sqlfunctions');
 const Discord = require('discord.js');
 const bot = new Discord.Client();
 const TOKEN = process.env.TOKEN;
-const prefix = '!';
+const prefix = '$';
 bot.login(TOKEN);
 
 const ranks = ['PVT','PFC','SPC4','SPC3','SPC2','SPC1','CPL','SGT','SSGT','SFC','MSGT','1SGT','SGM','2LT','1LT','CPT']
-const certs = ['leadership','medical','engineering','communication','marksman','mortar','heavyweapons','armorcrew','aircrew']
+const ranksE = ['Private','Private 1st Class','Specialist 4th Class','Specialist 3rd Class','Specialist 2nd Class','Specialist 1st Class','Corporal','Sergeant','Staff Sergeant','Sergeant 1st Class','Master Sergeant','1st Sergeant','Sergeant Major','2nd Lieutenant','1st Lieutenant','Captain']
+const certs = ['leadership','medical','engineering','communication','marksman','mortarcrew','heavyweapons','armoredcrew','aircrew']
 const medals = ['GCM','AM','ACR','MSM','BS','SM','DSM','DDS','SS','DSC'];
+const medalsE = ['Good Conduct Medal','Achievement Medal','Army Commendation Ribbon','Meritorious Service Medal','Bronze Star','Soldiers Medal','Distinguished Service Medal','Defense Distinguished Service','Silver Star','Distinguished Service Cross'];
 
 bot.on('ready', () => {
   console.info(`Logged in as ${bot.user.tag}!`);
@@ -20,18 +22,35 @@ String.prototype.capitalize = function() {
 }
 
 function commandinfo(msg,command){
-  const rankup = '\nUsage: !rankup <@user> <optional rank> *Defaults to next rank*';
-  const certify = '\n  Usage: !certify <@user> <certifcation>'
+  const rankup = `\n Usage: ${prefix}rankup <@user> <*optional* rank> *Defaults to next rank*`;
+  const certify = `\n  Usage: ${prefix}certify <@user> <certification>`
+  const decertify = `\n  Usage: ${prefix}decertify <@user> <certification>`
+  const award = `\n  Usage: ${prefix}award <@user> <award>`
+  const revoke = `\n  Usage: ${prefix}revoke <@user> <award>`
+  const lookup = `\n  Usage: ${prefix}lookup <@user>`
 
   switch(command){
     case 'rankup':
       msg.channel.send(rankup);
       break;
+
     case 'certify':
-    msg.channel.send(certify);
-    break;
+      msg.channel.send(certify);
+      break;
+
+    case 'decertify':
+      msg.channel.send(decertify);
+      break;
+    case 'award':
+      msg.channel.send(award);
+      break;
+
+    case 'revoke':
+      msg.channel.send(award);
+      break;
+
     default:
-      msg.channel.send('Available commands: \nCommand: !rankup' + rankup + '\nCommand: !certify'+ certify + ' ')
+      msg.channel.send('Available commands: \nCommand: rankup' + rankup + '\nCommand: certify'+ certify + '\nCommand: decertify' + decertify + '\nCommand: award'+ award + '\nCommand: revoke'+ revoke + '\nCommand: lookup'+ lookup + ' ')
       /*
       msg.channel.send('')
       msg.channel.send(rankup);
@@ -81,7 +100,7 @@ async function rankup(msg,args,taggedUser){
   {
     var currentRank = await sql.getRank(DiscordID);
     var numRank = ranks.indexOf(currentRank)
-    msg.reply(`${taggedUser.username} was ranked up to ${ranks[numRank+1]}`);
+    msg.reply(`${taggedUser.username} was ranked up to ${ranksE[numRank+1]}`);
     await sql.updateRank(DiscordID,ranks[numRank+1])
     //rankup to next rank
     return;
@@ -91,7 +110,7 @@ async function rankup(msg,args,taggedUser){
   {
     var newRank = inputrank;
     var numRank = ranks.indexOf(newRank)
-    msg.reply(`${taggedUser.username} was ranked up to ${ranks[numRank]}`);
+    msg.reply(`${taggedUser.username} was ranked up to ${ranksE[numRank]}`);
     sql.updateRank(DiscordID,ranks[numRank])
     //send rank to sql args[1]
     return;
@@ -116,7 +135,7 @@ async function certify(msg,args,taggedUser){
   }
   if(args.length>2){
     msg.reply("Too many arguments provided.")
-    info(msg);
+    commandinfo(msg,'certify');
     return;
   }
   //succesfull command input
@@ -125,7 +144,6 @@ async function certify(msg,args,taggedUser){
   var numCerts = currentCerts.length
   var certString = '';
   var inputcert = args[1].toLowerCase();
-  console.log(inputcert);
   if(certs.includes(inputcert))
   {
     for(var i=0;i<numCerts;i++){
@@ -138,6 +156,56 @@ async function certify(msg,args,taggedUser){
       await sql.addCert(DiscordID,inputcert)
     msg.channel.send(`<@${DiscordID}> was certified for ${inputcert.capitalize()}`);
 
+  }
+
+    //send cert to sql args[1]
+    return;
+  }
+  else {
+  msg.reply("Invalid certification provided\nHere are the valid certs:")
+  msg.channel.send(`${certs}`);
+  }
+
+  return;
+}
+
+async function decertify(msg,args,taggedUser){
+  if(taggedUser==undefined)
+  {
+    msg.reply("No user tagged.")
+    commandinfo(msg,'decertify');
+    return;
+  }
+  if(args.length<2){
+    msg.reply("Not enough arguments provided.")
+    commandinfo(msg,'decertify');
+    return;
+  }
+  if(args.length>2){
+    msg.reply("Too many arguments provided.")
+    commandinfo(msg,'decertify');
+    return;
+  }
+  //succesfull command input
+  var DiscordID = getDiscordID(taggedUser);
+  var currentCerts = await sql.getCerts(DiscordID);
+  var numCerts = currentCerts.length
+  var inputcert = args[1].toLowerCase();
+
+  if(certs.includes(inputcert))
+  {
+    for(var i=0;i<numCerts;i++){
+      if(currentCerts[i].Certification==inputcert){
+        var hasCert = true;
+      }
+    }
+    if(hasCert){
+      await sql.removeCert(DiscordID,inputcert)
+      msg.channel.send(`<@${DiscordID}> has been decertified of the ${inputcert.capitalize()} certification`);
+    }
+    if(!hasCert){
+      await sql.addCert(DiscordID,inputcert)
+    msg.channel.send(`<@${DiscordID}> does not have the ${inputcert.capitalize()} certification`);
     }
 
     //send cert to sql args[1]
@@ -155,21 +223,150 @@ async function award(msg,args,taggedUser){
   if(taggedUser==undefined)
   {
     msg.reply("No user tagged.")
-    commandinfo(msg,'certify');
+    commandinfo(msg,'award');
     return;
   }
   if(args.length<2){
     msg.reply("Not enough arguments provided.")
-    commandinfo(msg,'certify');
+    commandinfo(msg,'award');
     return;
   }
   if(args.length>2){
     msg.reply("Too many arguments provided.")
-    info(msg);
+    commandinfo(msg,'award');
     return;
   }
   //syntax successfull
-  var inputmedal = args[1].toUpperCase();
+  var DiscordID = getDiscordID(taggedUser);
+  var inputMedal = args[1].toUpperCase();
+  var currentMedals = await sql.getMedals(DiscordID);
+  var numMedals = currentMedals.length;
+
+  if(medals.includes(inputMedal))
+  {
+    for(var i=0;i<numMedals;i++){
+      if(currentMedals[i].Medal==inputMedal){
+        var hasMedal = true;
+        msg.channel.send(`<@${DiscordID}> already has this medal.`);
+      }
+    }
+    if(!hasMedal){
+      await sql.addMedal(DiscordID,inputMedal)
+
+      var outputMedal = medalsE[medals.indexOf(inputMedal)];
+    msg.channel.send(`<@${DiscordID}> was awarded ${outputMedal}`);
+
+  }
+  }  else {
+    msg.reply("Invalid medal provided\nHere are the valid medals:")
+    msg.channel.send(`${medals}`);
+    }
+
+}
+
+async function revoke(msg,args,taggedUser){
+  if(taggedUser==undefined)
+  {
+    msg.reply("No user tagged.")
+    commandinfo(msg,'revoke');
+    return;
+  }
+  if(args.length<2){
+    msg.reply("Not enough arguments provided.")
+    commandinfo(msg,'revoke');
+    return;
+  }
+  if(args.length>2){
+    msg.reply("Too many arguments provided.")
+    commandinfo(msg,'revoke');
+    return;
+  }
+  //syntax successfull
+  var DiscordID = getDiscordID(taggedUser);
+  var inputMedal = args[1].toUpperCase();
+  var currentMedals = await sql.getMedals(DiscordID);
+  var numMedals = currentMedals.length;
+
+  if(medals.includes(inputMedal))
+  {
+    for(var i=0;i<numMedals;i++){
+      if(currentMedals[i].Medal==inputMedal){
+        var hasMedal = true;
+      }
+    }
+    if(hasMedal){
+      await sql.removeMedal(DiscordID,inputMedal)
+
+      var outputMedal = medalsE[medals.indexOf(inputMedal)];
+    msg.channel.send(`<@${DiscordID}> was revoked of the ${outputMedal}`);
+
+  }
+  }  else {
+    msg.reply("Invalid medal provided\nHere are the valid medals:")
+    msg.channel.send(`${medals}`);
+    }
+
+}
+
+async function lookup(msg,args,taggedUser){
+  if(taggedUser==undefined)
+  {
+    msg.reply("No user tagged.")
+    commandinfo(msg,'lookup');
+    return;
+  }
+  if(args.length<1){
+    msg.reply("Not enough arguments provided.")
+    commandinfo(msg,'lookup');
+    return;
+  }
+  if(args.length>1){
+    msg.reply("Too many arguments provided.")
+    commandinfo(msg,'lookup');
+    return;
+  }
+
+  //syntax successfull
+  var DiscordID = getDiscordID(taggedUser);
+
+  var currentRank = await sql.getRank(DiscordID);
+  var currentCerts = await sql.getCerts(DiscordID);
+  var currentMedals = await sql.getMedals(DiscordID);
+  var numRank = ranks.indexOf(currentRank)
+  var numCerts = currentCerts.length;
+  var numMedals = currentMedals.length;
+
+  msg.reply(`Here is the information on <@${DiscordID}>`)
+  var string = '**Current Rank:** '
+  if(currentRank=='None'||currentRank==undefined){
+    string += 'No Rank'
+
+  }else{
+  string += ranksE[numRank];
+  }
+    string += '\n**Current Certifications:** ';
+  if(currentCerts=='None'||currentCerts[0]==undefined){
+    string += 'No certs'
+  }
+  else{
+    string += currentCerts[0].Certification.capitalize()
+    for(var i = 1;i<numCerts;i++){
+      string += ', ' + currentCerts[i].Certification.capitalize()
+    }
+  }
+
+  string += '\n**Current Awards:** '
+  if(currentMedals=='None'||currentMedals[0]==undefined){
+    string += 'No Awards'
+  }
+  else{
+    string += medalsE[medals.indexOf(currentMedals[0].Medal)];
+
+    for(var i = 1;i<numMedals;i++){
+      string += ', ' + medalsE[medals.indexOf(currentMedals[i].Medal)];
+    }
+  }
+  msg.channel.send(string);
 }
 
 function ping(msg){
@@ -199,20 +396,38 @@ bot.on('message', msg => {
   var discordId = getDiscordID(taggedUser);
   switch(command){
 
-      case 'info':
+      case 'help':
         commandinfo(msg);
         break;
+
       case 'ping':
         ping(msg);
         break;
+
       case 'rankup':
         rankup(msg,args,taggedUser);
-
         break;
+
       case 'certify':
         certify(msg,args,taggedUser);
-
         break;
+
+      case 'decertify':
+        decertify(msg,args,taggedUser);
+        break;
+
+      case 'award':
+          award(msg,args,taggedUser);
+          break;
+
+      case 'revoke':
+          revoke(msg,args,taggedUser);
+          break;
+
+      case 'lookup':
+          lookup(msg,args,taggedUser);
+          break;
+
       default:
         msg.reply('Not a valid command');
   }

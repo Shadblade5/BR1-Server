@@ -10,7 +10,8 @@ let connection = mysql.createConnection({
     password: `${SQLPASS}`,
     database: 'br1'
 });
-//const DiscordID = "208119044308467712";
+
+const DiscordID = "208119044308467712";
 //const rank = '2LT';
 
 const db = makeDb();
@@ -26,24 +27,39 @@ async function connectToServer(){
 }
 
 
-  connectToServer();
+connectToServer();
 
 
 async function getRank(DiscordID){
   const qrank = 'SELECT Rank FROM master WHERE DiscordID = '+ connection.escape(DiscordID);
+  try{
   var result = await query(qrank);
+  }catch(e){
+  console.log('Failed to query rank')
+  result = 'None'
+  }
   return result[0].Rank;
 }
 
 async function getCerts(DiscordID){
-  const qrank = 'SELECT Certification FROM certifications WHERE DiscordID = '+ connection.escape(DiscordID);
-  var result = await query(qrank);
+  const qcert = 'SELECT Certification FROM certifications WHERE DiscordID = '+ connection.escape(DiscordID);
+  try{
+  var result = await query(qcert);
+  }catch(e){
+  console.log('Failed to query certs')
+  result = 'None'
+  }
   return result;
 }
 
 async function getMedals(DiscordID){
-  const qrank = 'SELECT Medal FROM metals WHERE DiscordID = '+ connection.escape(DiscordID);
-  var result = await query(qrank);
+  const qmedal = 'SELECT Medal FROM medals WHERE DiscordID = '+ connection.escape(DiscordID);
+  try{
+  var result = await query(qmedal);
+  }catch(e){
+  console.log('Failed to query medals')
+  result = 'None'
+  }
   return result;
 }
 
@@ -72,7 +88,7 @@ await query(imedal);
 }
 
 async function removeMedal(DiscordID,medal){
-  const imedal = 'DELETE FROM metals WHERE DiscordID = '+ connection.escape(DiscordID)+'AND Certification = '+ connection.escape(medal);
+  const imedal = 'DELETE FROM medals WHERE DiscordID = '+ connection.escape(DiscordID)+'AND Medal = '+ connection.escape(medal);
   console.log(imedal);
   await query(imedal);
 }
@@ -91,11 +107,11 @@ async function query(sql){
 module.exports = {
   getRank,
   getCerts,
-  getMetals,
+  getMedals,
   updateRank,
   addCert,
   removeCert,
   addMedal,
-  removeMetal
+  removeMedal
 
 };
