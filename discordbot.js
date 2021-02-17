@@ -8,11 +8,16 @@ const prefix = '!';
 bot.login(TOKEN);
 
 const ranks = ['PVT','PFC','SPC4','SPC3','SPC2','SPC1','CPL','SGT','SSGT','SFC','MSGT','1SGT','SGM','2LT','1LT','CPT']
-const certs = ['Leadership','Medical','Engineering','Communication','Marksman','Mortar','HeavyWeapons','Armor','Air']
+const certs = ['leadership','medical','engineering','communication','marksman','mortar','heavyweapons','armorcrew','aircrew']
 
 bot.on('ready', () => {
   console.info(`Logged in as ${bot.user.tag}!`);
 });
+
+String.prototype.capitalize = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+}
+
 function commandinfo(msg,command){
   const rankup = '\nUsage: !rankup <@user> <optional rank> *Defaults to next rank*';
   const certify = '\n  Usage: !certify <@user> <certifcation>'
@@ -25,7 +30,7 @@ function commandinfo(msg,command){
     msg.channel.send(certify);
     break;
     default:
-      msg.channel.send('Available commands:\nCommand: !rankup' + rankup + '\nCommand: !certify'+ certify + ' ')
+      msg.channel.send('Available commands: \nCommand: !rankup' + rankup + '\nCommand: !certify'+ certify + ' ')
       /*
       msg.channel.send('')
       msg.channel.send(rankup);
@@ -49,13 +54,13 @@ function getUserFromMention(mention) {
 		return bot.users.cache.get(mention);
 	}
 }
+
 function getDiscordID(user){
   	if (!user) return;
   return user.id
 }
 
 async function rankup(msg,args,taggedUser){
-
   //Query SQL and update ranked
   if(taggedUser==undefined)
   {
@@ -75,15 +80,15 @@ async function rankup(msg,args,taggedUser){
   {
     var currentRank = await sql.getRank(DiscordID);
     var numRank = ranks.indexOf(currentRank)
-    console.log(numRank)
     msg.reply(`${taggedUser.username} was ranked up to ${ranks[numRank+1]}`);
     await sql.updateRank(DiscordID,ranks[numRank+1])
     //rankup to next rank
     return;
   }
-  if(ranks.includes(args[1]))
+  var inputrank = args[1].toUpperCase()
+  if(ranks.includes(inputrank))
   {
-    var newRank = args[1]
+    var newRank = inputrank;
     var numRank = ranks.indexOf(newRank)
     msg.reply(`${taggedUser.username} was ranked up to ${ranks[numRank]}`);
     sql.updateRank(DiscordID,ranks[numRank])
@@ -96,10 +101,8 @@ async function rankup(msg,args,taggedUser){
   }
 }
 
-
-
-function certify(msg,args,taggedUser){
-  if(taggedUser==undefined)
+async function certify(msg,args,taggedUser){
+    if(taggedUser==undefined)
   {
     msg.reply("No user tagged.")
     commandinfo(msg,'certify');
@@ -115,8 +118,27 @@ function certify(msg,args,taggedUser){
     info(msg);
     return;
   }
-  if(certs.includes(args[1]))
+  //succesfull command input
+  var DiscordID = getDiscordID(taggedUser);
+  var currentCerts = await sql.getCerts(DiscordID);
+  var numCerts = currentCerts.length
+  var certString = '';
+  var inputcert = args[1].toLowerCase();
+  console.log(inputcert);
+  if(certs.includes(inputcert))
   {
+    for(var i=0;i<numCerts;i++){
+      if(currentCerts[i].Certification==inputcert){
+        var hasCert = true;
+        msg.channel.send(`<@${DiscordID}> already has this cert.`);
+      }
+    }
+    if(!hasCert){
+      await sql.addCert(DiscordID,inputcert)
+    msg.channel.send(`<@${DiscordID}> was certified for ${inputcert.capitalize()}`);
+
+    }
+
     //send cert to sql args[1]
     return;
   }
@@ -128,6 +150,20 @@ function certify(msg,args,taggedUser){
   return;
 }
 
+function ping(msg){
+  msg.channel.send("Pinging...").then(m =>{
+      // The math thingy to calculate the user's ping
+    var ping = m.createdTimestamp - msg.createdTimestamp;
+
+    // Basic embed
+    var embed = new Discord.MessageEmbed()
+    .setAuthor(`Pong!\n ${ping}ms`)
+    .setColor("Your Color")
+
+    // Then It Edits the message with the ping variable embed that you created
+    m.edit(embed);
+  });
+}
 
 
 bot.on('message', msg => {
@@ -145,18 +181,7 @@ bot.on('message', msg => {
         commandinfo(msg);
         break;
       case 'ping':
-        msg.channel.send("Pinging...").then(m =>{
-            // The math thingy to calculate the user's ping
-          var ping = m.createdTimestamp - msg.createdTimestamp;
-
-          // Basic embed
-          var embed = new Discord.MessageEmbed()
-          .setAuthor(`Pong!\n ${ping}ms`)
-          .setColor("Your Color")
-
-          // Then It Edits the message with the ping variable embed that you created
-          m.edit(embed);
-        });
+        ping(msg);
         break;
       case 'rankup':
         rankup(msg,args,taggedUser);
