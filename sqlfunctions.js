@@ -41,15 +41,10 @@ async function getCerts(DiscordID){
   return result;
 }
 
-async function addCert(DiscordID,cert){
-  const icert = 'INSERT INTO certifications (DiscordID, Certification) VALUES ('+connection.escape(DiscordID)+', '+ connection.escape(cert)+')';
-  console.log(icert);
-  await query(icert);
-}
-async function removeCert(DiscordID,cert){
-  const icert = 'DELETE FROM certifications WHERE DiscordID = '+ connection.escape(DiscordID)+'AND Certification = '+ connection.escape(cert);
-  console.log(icert);
-  await query(icert);
+async function getMedals(DiscordID){
+  const qrank = 'SELECT Medal FROM metals WHERE DiscordID = '+ connection.escape(DiscordID);
+  var result = await query(qrank);
+  return result;
 }
 
 async function updateRank(DiscordID,rank){
@@ -58,7 +53,30 @@ async function updateRank(DiscordID,rank){
   return result;
 }
 
-//updateRank(DiscordID,rank);
+async function addCert(DiscordID,cert){
+  const icert = 'INSERT INTO certifications (DiscordID, Certification) VALUES ('+connection.escape(DiscordID)+', '+ connection.escape(cert)+')';
+  console.log(icert);
+  await query(icert);
+}
+
+async function removeCert(DiscordID,cert){
+  const icert = 'DELETE FROM certifications WHERE DiscordID = '+ connection.escape(DiscordID)+'AND Certification = '+ connection.escape(cert);
+  console.log(icert);
+  await query(icert);
+}
+
+async function addMedal(DiscordID,medal){
+const imedal = 'INSERT INTO medals (DiscordID, Medal) VALUES ('+connection.escape(DiscordID)+', '+ connection.escape(medal)+')';
+console.log(imedal);
+await query(imedal);
+}
+
+async function removeMedal(DiscordID,medal){
+  const imedal = 'DELETE FROM metals WHERE DiscordID = '+ connection.escape(DiscordID)+'AND Certification = '+ connection.escape(medal);
+  console.log(imedal);
+  await query(imedal);
+}
+
 async function query(sql){
 
   try{
@@ -72,7 +90,12 @@ async function query(sql){
 
 module.exports = {
   getRank,
+  getCerts,
+  getMetals,
   updateRank,
   addCert,
-  getCerts
+  removeCert,
+  addMedal,
+  removeMetal
+
 };

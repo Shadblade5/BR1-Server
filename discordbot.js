@@ -9,6 +9,7 @@ bot.login(TOKEN);
 
 const ranks = ['PVT','PFC','SPC4','SPC3','SPC2','SPC1','CPL','SGT','SSGT','SFC','MSGT','1SGT','SGM','2LT','1LT','CPT']
 const certs = ['leadership','medical','engineering','communication','marksman','mortar','heavyweapons','armorcrew','aircrew']
+const medals = ['GCM','AM','ACR','MSM','BS','SM','DSM','DDS','SS','DSC'];
 
 bot.on('ready', () => {
   console.info(`Logged in as ${bot.user.tag}!`);
@@ -102,7 +103,7 @@ async function rankup(msg,args,taggedUser){
 }
 
 async function certify(msg,args,taggedUser){
-    if(taggedUser==undefined)
+  if(taggedUser==undefined)
   {
     msg.reply("No user tagged.")
     commandinfo(msg,'certify');
@@ -148,6 +149,27 @@ async function certify(msg,args,taggedUser){
   }
 
   return;
+}
+
+async function award(msg,args,taggedUser){
+  if(taggedUser==undefined)
+  {
+    msg.reply("No user tagged.")
+    commandinfo(msg,'certify');
+    return;
+  }
+  if(args.length<2){
+    msg.reply("Not enough arguments provided.")
+    commandinfo(msg,'certify');
+    return;
+  }
+  if(args.length>2){
+    msg.reply("Too many arguments provided.")
+    info(msg);
+    return;
+  }
+  //syntax successfull
+  var inputmedal = args[1].toUpperCase();
 }
 
 function ping(msg){
