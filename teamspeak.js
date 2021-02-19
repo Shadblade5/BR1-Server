@@ -5,8 +5,8 @@ const mysql = require('mysql');
 require('dotenv').config();
 const SQLPASS = process.env.SQLPASS
 const TS3PASS = process.env.TS3PASS
+const hostIP = process.env.hostIP
 
-const hostIP = "47.41.254.91";
 const qPort = 10011;
 const sPort = 9987;
 
