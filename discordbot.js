@@ -1,11 +1,13 @@
-require('dotenv').config();
-const sql = require('./sqlfunctions');
+const path = require('path')
+const fs = require('fs')
+const Discord = require('discord.js')
+const client = new Discord.Client()
+const config = require('./config.json')
+const sql = require('./sqlfunctions')
 //require('./teamspeak');
-const Discord = require('discord.js');
-const bot = new Discord.Client();
-const TOKEN = process.env.TOKEN;
-const prefix = '$';
-bot.login(TOKEN);
+
+const prefix = config.prefix
+
 
 const ranks = ['PVT','PFC','SPC4','SPC3','SPC2','SPC1','CPL','SGT','SSGT','SFC','MSGT','1SGT','SGM','2LT','1LT','CPT']
 const ranksE = ['Private','Private 1st Class','Specialist 4th Class','Specialist 3rd Class','Specialist 2nd Class','Specialist 1st Class','Corporal','Sergeant','Staff Sergeant','Sergeant 1st Class','Master Sergeant','1st Sergeant','Sergeant Major','2nd Lieutenant','1st Lieutenant','Captain']
@@ -13,10 +15,35 @@ const certs = ['leadership','medical','engineering','communication','marksman','
 const medals = ['GCM','AM','ACR','MSM','BS','SM','DSM','DDS','SS','DSC'];
 const medalsE = ['Good Conduct Medal','Achievement Medal','Army Commendation Ribbon','Meritorious Service Medal','Bronze Star','Soldiers Medal','Distinguished Service Medal','Defense Distinguished Service','Silver Star','Distinguished Service Cross'];
 
-bot.on('ready', () => {
-  console.info(`Logged in as ${bot.user.tag}!`);
-});
+client.on('ready', async () => {
+  console.log('The client is ready!')
 
+  const baseFile = 'command-base.js'
+  const commandBase = require(`./commands/${baseFile}`)
+
+  const readCommands = (dir) => {
+    const files = fs.readdirSync(path.join(__dirname, dir))
+    
+    for (const file of files) {
+      const stat = fs.lstatSync(path.join(__dirname, dir, file))
+
+      if (stat.isDirectory()) {
+        readCommands(path.join(dir, file))
+
+      } else if (file !== baseFile) {
+
+        const option = require(path.join(__dirname, dir, file))
+        commandBase(client, option)
+      }
+    }
+  }
+
+  readCommands('commands')
+})
+
+client.login(config.token);
+
+/*
 String.prototype.capitalize = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
 }
@@ -51,12 +78,6 @@ function commandinfo(msg,command){
 
     default:
       msg.channel.send('Available commands: \nCommand: rankup' + rankup + '\nCommand: certify'+ certify + '\nCommand: decertify' + decertify + '\nCommand: award'+ award + '\nCommand: revoke'+ revoke + '\nCommand: lookup'+ lookup + ' ')
-      /*
-      msg.channel.send('')
-      msg.channel.send(rankup);
-      msg.channel.send('\nCommand: !certify')
-      msg.channel.send(certify);
-      */
     }
 return
 }
@@ -386,6 +407,10 @@ function ping(msg){
 
 
 bot.on('message', msg => {
+
+
+
+  /*
   if (!msg.content.startsWith(prefix)) return;
 
   const withoutPrefix = msg.content.slice(prefix.length);
@@ -431,4 +456,5 @@ bot.on('message', msg => {
       default:
         msg.reply('Not a valid command');
   }
-});
+
+});*/
