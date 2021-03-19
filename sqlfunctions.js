@@ -2,12 +2,12 @@ require('dotenv').config();
 const SQLPASS = process.env.SQLPASS
 const { makeDb } = require('mysql-async-simple');
 const mysql = require('mysql');
-
+const config = require('./config.json')
 
 let connection = mysql.createConnection({
-    host: 'br1.ddns.us',
+    host: config.IP,
     user: 'Server',
-    password: `${SQLPASS}`,
+    password: config.SQLPASS,
     database: 'br1'
 });
 
@@ -25,18 +25,16 @@ async function connectToSQLServer(){
     console.log(e);
     console.log('SQL server connection failed.');
   }
-
-
 }
+//async function getroleID()
 
-
-
-async function fillTable(ID,medalname,medalabbr){
-  const sql = 'INSERT INTO medalinfo(ID, medalname,medalabbr) VALUES ('+connection.escape(ID)+', '+connection.escape(medalname)+', '+connection.escape(medalabbr)+')';
+async function addUser(discordName,DiscordID,TeamspeakID='',rank){
+  const sql = 'INSERT INTO master (Discord Name, DiscordID, TeamspeakID, rank) VALUES ('+connection.escape(discordName)+', '+connection.escape(DiscordID)+', '+connection.escape(TeamspeakID)+', '+connection.escape(rank)+')';
     try{
       var result = await query(sql);
+      console.log(discordName+' was successfully added to the database');
     }catch(e){
-    console.log('Failed to fill table');
+    console.log('Failed to add user to database');
     console.log(e)
     }
   }
@@ -125,6 +123,6 @@ module.exports = {
   removeCert,
   addMedal,
   removeMedal,
-  fillTable
+  addUser
 
 };

@@ -8,9 +8,6 @@ const sql = require('./sqlfunctions')
 
 const prefix = config.prefix
 
-
-
-
 client.on('ready', async () => {
   console.log('The client is ready!')
   await sql.connectToSQLServer();
@@ -33,7 +30,6 @@ client.on('ready', async () => {
       }
     }
   }
-
   readCommands('commands')
   /*for(var i=0;i<certs.length;i++){
   await sql.fillTable(i,medalsE[i],medals[i]);
