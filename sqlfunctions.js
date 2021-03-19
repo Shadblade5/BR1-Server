@@ -29,7 +29,9 @@ async function connectToServer(){
 
 connectToServer();
 
-
+async function fillTable(ID,rankname,rankabbr){
+  const sql = 'INSERT into rankname Values ('+connection.escape(ID)+','+connection.escape(rankname)+','+connection.escape(rankabbr)')';
+}
 async function getRank(DiscordID){
   const qrank = 'SELECT Rank FROM master WHERE DiscordID = '+ connection.escape(DiscordID);
   try{
