@@ -7,14 +7,13 @@ module.exports = {
   callback: (message, arguments, text) => {
     const targetUser = message.mentions.users.first()
     const username = arguments[0]
-    const member;
     const member = client.users.get('name',username);
-    if(!targetUser &&) {
+    /*if(!targetUser) {
       message.reply('Please specify someone to give a role to.')
       return
     }else if(){
 
-    }
+    }*/
     arguments.shift()
 
     const roleName = arguments.join(' ')

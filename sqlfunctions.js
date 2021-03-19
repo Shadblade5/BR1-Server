@@ -16,24 +16,33 @@ const DiscordID = "208119044308467712";
 
 const db = makeDb();
 
-async function connectToServer(){
+async function connectToSQLServer(){
   try{
+    console.log('Starting connection to MySQL server...')
     await db.connect(connection);
+    await console.log('MySQL server Connected!');
   }catch (e){
-    console.log(e)
+    console.log(e);
+    console.log('SQL server connection failed.');
   }
-  console.log('Connected to the MySQL server.');
+
 
 }
 
 
-connectToServer();
 
-async function fillTable(ID,rankname,rankabbr){
-  const sql = 'INSERT into rankname Values ('+connection.escape(ID)+','+connection.escape(rankname)+','+connection.escape(rankabbr)')';
-}
+async function fillTable(ID,medalname,medalabbr){
+  const sql = 'INSERT INTO medalinfo(ID, medalname,medalabbr) VALUES ('+connection.escape(ID)+', '+connection.escape(medalname)+', '+connection.escape(medalabbr)+')';
+    try{
+      var result = await query(sql);
+    }catch(e){
+    console.log('Failed to fill table');
+    console.log(e)
+    }
+  }
+
 async function getRank(DiscordID){
-  const qrank = 'SELECT Rank FROM master WHERE DiscordID = '+ connection.escape(DiscordID);
+  const qrank = 'SELECT Rank FROM master WHERE DiscordID = '+connection.escape(DiscordID);
   try{
   var result = await query(qrank);
   }catch(e){
@@ -107,6 +116,7 @@ async function query(sql){
 
 
 module.exports = {
+  connectToSQLServer,
   getRank,
   getCerts,
   getMedals,
@@ -114,6 +124,7 @@ module.exports = {
   addCert,
   removeCert,
   addMedal,
-  removeMedal
+  removeMedal,
+  fillTable
 
 };

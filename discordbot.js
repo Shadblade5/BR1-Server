@@ -9,21 +9,17 @@ const sql = require('./sqlfunctions')
 const prefix = config.prefix
 
 
-const ranks = ['PVT','PFC','SPC4','SPC3','SPC2','SPC1','CPL','SGT','SSGT','SFC','MSGT','1SGT','SGM','2LT','1LT','CPT']
-const ranksE = ['Private','Private 1st Class','Specialist 4th Class','Specialist 3rd Class','Specialist 2nd Class','Specialist 1st Class','Corporal','Sergeant','Staff Sergeant','Sergeant 1st Class','Master Sergeant','1st Sergeant','Sergeant Major','2nd Lieutenant','1st Lieutenant','Captain']
-const certs = ['leadership','medical','engineering','communication','marksman','mortarcrew','heavyweapons','armoredcrew','aircrew']
-const medals = ['GCM','AM','ACR','MSM','BS','SM','DSM','DDS','SS','DSC'];
-const medalsE = ['Good Conduct Medal','Achievement Medal','Army Commendation Ribbon','Meritorious Service Medal','Bronze Star','Soldiers Medal','Distinguished Service Medal','Defense Distinguished Service','Silver Star','Distinguished Service Cross'];
+
 
 client.on('ready', async () => {
   console.log('The client is ready!')
-
+  await sql.connectToSQLServer();
   const baseFile = 'command-base.js'
   const commandBase = require(`./commands/${baseFile}`)
 
   const readCommands = (dir) => {
     const files = fs.readdirSync(path.join(__dirname, dir))
-    
+
     for (const file of files) {
       const stat = fs.lstatSync(path.join(__dirname, dir, file))
 
@@ -39,9 +35,13 @@ client.on('ready', async () => {
   }
 
   readCommands('commands')
+  /*for(var i=0;i<certs.length;i++){
+  await sql.fillTable(i,medalsE[i],medals[i]);
+}*/
 })
 
 client.login(config.token);
+
 
 /*
 String.prototype.capitalize = function() {
