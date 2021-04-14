@@ -59,6 +59,6 @@ module.exports = {
 
   },
   permissions: '',
-  description:'Gives the user a Certification',
+  description:'Removes a Certification form the user.',
   requiredRoles: [],
 }
