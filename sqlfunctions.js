@@ -66,7 +66,8 @@ async function getCerts(DiscordID){
   try{
   var result = await query(qcert);
   }catch(e){
-  console.log('Failed to query certs')
+  throw('Failed to query certs')
+  console.log(e)
   result = 'None'
   }
   return result;
@@ -77,7 +78,8 @@ async function getMedals(DiscordID){
   try{
   var result = await query(qmedal);
   }catch(e){
-  console.log('Failed to query medals')
+  throw('Failed to query medals')
+  console.log(e)
   result = 'None'
   }
   return result;
@@ -110,10 +112,10 @@ async function updateRank(DiscordID,rank){
 async function addCert(DiscordID,cert){
   try{
   const icert = 'INSERT INTO certifications (DiscordID, Certification) VALUES ('+connection.escape(DiscordID)+', '+ connection.escape(cert)+')';
-  await query(icert);
+  var result = await query(icert);
   }catch(e){
-    throw("Failed to add cert")
     console.log(e)
+    throw("Failed to add cert")
     result = 'None'
   }
   return result;
@@ -122,7 +124,7 @@ async function addCert(DiscordID,cert){
 async function removeCert(DiscordID,cert){
   try{
   const rcert = 'DELETE FROM certifications WHERE DiscordID = '+ connection.escape(DiscordID)+'AND Certification = '+ connection.escape(cert);
-  await query(rcert);
+  var result = await query(rcert);
   }catch(e){
     throw("Failed to remove cert")
     console.log(e)
@@ -134,7 +136,7 @@ async function removeCert(DiscordID,cert){
 async function addMedal(DiscordID,medal){
   try{
   const imedal = 'INSERT INTO medals (DiscordID, Medal) VALUES ('+connection.escape(DiscordID)+', '+ connection.escape(medal)+')';
-  await query(imedal);
+  var result = await query(imedal);
   }catch(e){
     throw("Failed to add medal")
     console.log(e)
@@ -146,7 +148,7 @@ async function addMedal(DiscordID,medal){
 async function removeMedal(DiscordID,medal){
   try{
   const rmedal = 'DELETE FROM medals WHERE DiscordID = '+ connection.escape(DiscordID)+'AND Medal = '+ connection.escape(medal);
-  await query(rmedal);
+  var result = await query(rmedal);
   }catch(e){
     throw("Failed to remove medal")
     console.log(e)
@@ -163,7 +165,6 @@ async function query(sql){
   }
   return result;
 }
-
 
 module.exports = {
   connectToSQLServer,

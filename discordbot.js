@@ -1,3 +1,4 @@
+require('events').EventEmitter.defaultMaxListeners = 20;
 const Discord = require('discord.js')
 const client = new Discord.Client()
 const config = require('./config.json')
@@ -14,6 +15,9 @@ client.on('ready', async () => {
 
 client.login(config.token);
 
+String.prototype.capitalize = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+}
 
 /*
 String.prototype.capitalize = function() {
