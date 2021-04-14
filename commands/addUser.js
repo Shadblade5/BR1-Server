@@ -21,5 +21,6 @@ module.exports = {
     }
   },
   permissions: '',
+  description:'Adds a new user to the BR1 Database. TS3 ID is optional.',
   requiredRoles: [],
 }
