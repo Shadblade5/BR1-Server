@@ -12,7 +12,7 @@ module.exports = {
     const discordID = targetUser.id
     try{
     await sql.removeUser(discordName,discordID)
-    message.reply(`${discordName} was successfully added to the database`)
+    message.reply(`${discordName} was successfully removed from the database`)
     }catch(e){
     message.reply(e)
     }

@@ -45,7 +45,7 @@ async function removeUser(discordName,DiscordID){
         var result = await query(sql);
         console.log(discordName+' was successfully removed from the database');
       }catch(e){
-      throw('Failed to remove user from the database');
+      throw('User does not exist in the database.');
       console.log(e)
       }
     }
@@ -83,45 +83,86 @@ async function getMedals(DiscordID){
   return result;
 }
 
+async function updateTS3ID(DiscordID,TS3ID){
+  try{
+  const uts3 = 'UPDATE master SET TeamspeakID = '+connection.escape(TS3ID)+' WHERE DiscordID = '+ connection.escape(DiscordID);
+  var result = await query(uts3);
+  }catch(e){
+    throw("Failed to update TeamspeakID")
+    console.log(e)
+    result = 'None'
+  }
+  return result;
+}
+
 async function updateRank(DiscordID,rank){
+  try{
   const urank = 'UPDATE master SET Rank = '+connection.escape(rank)+' WHERE DiscordID = '+ connection.escape(DiscordID);
   var result = await query(urank);
+  }catch(e){
+    throw("Failed to update rank")
+    console.log(e)
+    result = 'None'
+  }
   return result;
 }
 
 async function addCert(DiscordID,cert){
+  try{
   const icert = 'INSERT INTO certifications (DiscordID, Certification) VALUES ('+connection.escape(DiscordID)+', '+ connection.escape(cert)+')';
-  console.log(icert);
   await query(icert);
+  }catch(e){
+    throw("Failed to add cert")
+    console.log(e)
+    result = 'None'
+  }
+  return result;
 }
 
 async function removeCert(DiscordID,cert){
-  const icert = 'DELETE FROM certifications WHERE DiscordID = '+ connection.escape(DiscordID)+'AND Certification = '+ connection.escape(cert);
-  console.log(icert);
-  await query(icert);
+  try{
+  const rcert = 'DELETE FROM certifications WHERE DiscordID = '+ connection.escape(DiscordID)+'AND Certification = '+ connection.escape(cert);
+  await query(rcert);
+  }catch(e){
+    throw("Failed to remove cert")
+    console.log(e)
+    result = 'None'
+  }
+  return result;
 }
 
 async function addMedal(DiscordID,medal){
-const imedal = 'INSERT INTO medals (DiscordID, Medal) VALUES ('+connection.escape(DiscordID)+', '+ connection.escape(medal)+')';
-console.log(imedal);
-await query(imedal);
+  try{
+  const imedal = 'INSERT INTO medals (DiscordID, Medal) VALUES ('+connection.escape(DiscordID)+', '+ connection.escape(medal)+')';
+  await query(imedal);
+  }catch(e){
+    throw("Failed to add medal")
+    console.log(e)
+    result = 'None'
+  }
+  return result;
 }
 
 async function removeMedal(DiscordID,medal){
-  const imedal = 'DELETE FROM medals WHERE DiscordID = '+ connection.escape(DiscordID)+'AND Medal = '+ connection.escape(medal);
-  console.log(imedal);
-  await query(imedal);
+  try{
+  const rmedal = 'DELETE FROM medals WHERE DiscordID = '+ connection.escape(DiscordID)+'AND Medal = '+ connection.escape(medal);
+  await query(rmedal);
+  }catch(e){
+    throw("Failed to remove medal")
+    console.log(e)
+    result = 'None'
+  }
+  return result;
 }
 
 async function query(sql){
-
   try{
-  var result = await db.query(connection,sql);
-}catch(e){
-  throw(e);
+    var result = await db.query(connection,sql);
+  }catch(e){
+    throw(e);
   }
-    return result;
-  }
+  return result;
+}
 
 
 module.exports = {
