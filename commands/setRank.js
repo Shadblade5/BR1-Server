@@ -63,6 +63,7 @@ module.exports = {
       oldrole = guild.roles.cache.find((role) => {
         return role.name === currentRank
       });
+
 //      console.log("New role: "+ role)
 //      console.log("Old role: " +oldrole)
 //      member.roles.add(role);
