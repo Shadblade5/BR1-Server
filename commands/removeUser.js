@@ -1,20 +1,17 @@
 const sql = require('../sqlfunctions')
 module.exports = {
-  commands: ['adduser'],
-  expectedArgs: '<@user> <TeamspeakID>',
+  commands: ['removeuser'],
+  expectedArgs: '<@user>',
   permissionError: 'You need admin permissions to run this command',
   minArgs: 1,
-  maxArgs: 2,
+  maxArgs: 1,
   callback: async(message, arguments, text) => {
     const targetUser = message.mentions.users.first()
     const username = arguments[0]
     const discordName = targetUser.tag
     const discordID = targetUser.id
-    const rank = 'PVT'
-    arguments.shift()
-    const teamspeakID = arguments[0];
     try{
-    await sql.addUser(discordName,discordID,teamspeakID,rank)
+    await sql.removeUser(discordName,discordID)
     message.reply(`${discordName} was successfully added to the database`)
     }catch(e){
     message.reply(e)

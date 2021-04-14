@@ -27,24 +27,35 @@ async function connectToSQLServer(){
   }
 }
 //async function getroleID()
-
+//(DiscordName, DiscordID, TeamspeakID, rank)
 async function addUser(discordName,DiscordID,TeamspeakID='',rank){
-  const sql = 'INSERT INTO master (Discord Name, DiscordID, TeamspeakID, rank) VALUES ('+connection.escape(discordName)+', '+connection.escape(DiscordID)+', '+connection.escape(TeamspeakID)+', '+connection.escape(rank)+')';
+  const sql = 'INSERT INTO master VALUES ('+connection.escape(discordName)+', '+connection.escape(DiscordID)+', '+connection.escape(TeamspeakID)+', '+connection.escape(rank)+')';
     try{
       var result = await query(sql);
       console.log(discordName+' was successfully added to the database');
     }catch(e){
-    console.log('Failed to add user to database');
+    throw('User already exists in the database.');
     console.log(e)
     }
   }
+
+async function removeUser(discordName,DiscordID){
+    const sql = 'DELETE FROM master WHERE DiscordID = '+connection.escape(DiscordID)+'';
+      try{
+        var result = await query(sql);
+        console.log(discordName+' was successfully removed from the database');
+      }catch(e){
+      throw('Failed to remove user from the database');
+      console.log(e)
+      }
+    }
 
 async function getRank(DiscordID){
   const qrank = 'SELECT Rank FROM master WHERE DiscordID = '+connection.escape(DiscordID);
   try{
   var result = await query(qrank);
   }catch(e){
-  console.log('Failed to query rank')
+  throw('Failed to query rank')
   result = 'None'
   }
   return result[0].Rank;
@@ -106,8 +117,8 @@ async function query(sql){
 
   try{
   var result = await db.query(connection,sql);
-  }catch(e){
-    console.log(e);
+}catch(e){
+  throw(e);
   }
     return result;
   }
@@ -123,6 +134,7 @@ module.exports = {
   removeCert,
   addMedal,
   removeMedal,
-  addUser
+  addUser,
+  removeUser
 
 };
