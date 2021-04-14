@@ -18,5 +18,6 @@ module.exports = {
     }
   },
   permissions: '',
+  description:'Removes a existing member from the BR1 Database.',
   requiredRoles: [],
 }

@@ -53,5 +53,6 @@ module.exports = {
 
   },
   permissions: '',
+  description:'Ranks the user up to the next rank.',
   requiredRoles: [],
 }

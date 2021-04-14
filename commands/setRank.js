@@ -33,7 +33,6 @@ module.exports = {
     }
     var newrank = arguments[0]
     const numRank = ranks.abbr.indexOf(newrank)
-    console.log(numRank)
     if(numRank<0){
         message.reply(`The rank ${newrank} does not exist, here is the list of ranks \n ${ranks.abbr}`)
         return;
@@ -64,15 +63,16 @@ module.exports = {
       oldrole = guild.roles.cache.find((role) => {
         return role.name === currentRank
       });
-      console.log("New role: "+ role)
-      console.log("Old role: " +oldrole)
+
+//      console.log("New role: "+ role)
+//      console.log("Old role: " +oldrole)
 //      member.roles.add(role);
 //      member.roles.remove(oldrole);
-    console.log("Got to the SQL!!")
-    console.log(newrankabbr)
+
     await sql.updateRank(targetUser.id,newrankabbr)
     message.reply(`${targetUser.tag} now has the rank ${newrank}`)
   },
   permissions: '',
+  description:'Gives a user a specific rank',
   requiredRoles: [],
 }
