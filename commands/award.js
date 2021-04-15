@@ -23,7 +23,7 @@ module.exports = {
     const numMedal = medals.abbr.indexOf(award)
     const awardname = medals.name[numMedal]
     if(numMedal<0){
-      message.reply(`Invalid award. here is a list of valid medals \n${medals.abbr}`)
+      message.reply(`Invalid award. Here is a list of valid awards: \n${medals.abbr}`)
       return;
     }else{
       var currentMedals = []

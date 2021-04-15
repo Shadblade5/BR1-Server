@@ -6,7 +6,17 @@ module.exports = {
   minArgs: 1,
   maxArgs: 2,
   callback: async(message, arguments, text) => {
-    const targetUser = message.mentions.users.first()
+      const { guild } = message
+      var member
+      var targetUser
+    try{
+      targetUser = message.mentions.users.first()
+      member = guild.members.cache.get(targetUser.id)
+    }catch(e){
+      console.log(e)
+      message.reply('Please specify someone with a mention to add them to the database.')
+      return;
+    }
     const username = arguments[0]
     const discordName = targetUser.tag
     const discordID = targetUser.id
