@@ -1,14 +1,12 @@
 const sql = require('../sqlfunctions')
+const certs = require('../info/certs.json')
 module.exports = {
-  commands: ['removeuser'],
-
+  commands: ['getcerts'],
   expectedArgs: '<@user/ID>',
-
   permissionError: 'You need admin permissions to run this command',
   minArgs: 1,
   maxArgs: 1,
   callback: async(message, arguments, text) => {
-
 
     const { guild } = message
     var member
@@ -39,19 +37,23 @@ module.exports = {
       message.reply('Please specify someone to run the command on')
       return;
     }
+    //code starts here
 
-    const username = arguments[0]
-    const discordName = targetUser.tag
-    const discordID = targetUser.id
+
+    var currentcerts
     try{
-    await sql.removeUser(discordName,discordID)
-    message.reply(`${discordName} was successfully removed from the database`)
+      currentcerts = await sql.getCerts(memberID)
+      for(var i=0;i<currentcerts.length;i++){
+        currentcerts[i] = currentcerts[i].Cert.capitalize()+' ';
+      }
+          message.reply(`${targetUser.tag} has the following certs:\n ${currentcerts}`)
     }catch(e){
-    message.reply(e)
+      message.reply(`Failed to get ${targetUser.tag}'s certs.`)
+      console.log(e);
     }
+
   },
   permissions: '',
-  description:'Removes a existing member from the BR1 Database.',
-
-  requiredRoles: ['Officer'],
+  description:'Gets the current certs of the User.',
+  requiredRoles: [],
 }
