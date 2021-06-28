@@ -1,7 +1,9 @@
 const sql = require('../sqlfunctions')
+const certs = require('../info/certs.json')
 const medals = require('../info/medals.json')
+const ranks = require('../info/ranks.json')
 module.exports = {
-  commands: ['getawards'],
+  commands: ['getuserinfo'],
   expectedArgs: '<@user/ID>',
   permissionError: 'You need admin permissions to run this command',
   minArgs: 1,
@@ -38,22 +40,30 @@ module.exports = {
       return;
     }
 
-
-
+    var currentcerts
     var currentawards
+    var currentRank
     try{
-      currentawards = await sql.getMedals(memberID)
+      currentRank = await sql.getRank(targetUser.id)
+      const numRank = ranks.abbr.indexOf(currentRank)
+      currentRank = ranks.name[numRank]
+      currentawards = await sql.getMedals(targetUser.id)
+      currentcerts = await sql.getCerts(targetUser.id)
+      for(var i=0;i<currentcerts.length;i++){
+        currentcerts[i] = ' '+currentcerts[i].Cert.capitalize();
+      }
       for(var i=0;i<currentawards.length;i++){
         currentawards[i] = ' '+medals.name[medals.abbr.indexOf(currentawards[i].Medal.toString())]
       }
-          message.reply(`${targetUser.tag} has the following awards:\n ${currentawards}`)
+      message.reply(`Here is ${targetUser.tag} info:\nCurrent Rank: ${currentRank}\nCurrent certs:${currentcerts}\nCurrent awards:${currentawards}`)
+
     }catch(e){
-      message.reply(`Failed to get ${targetUser.tag}'s awards.'`)
+      message.reply(`Failed to get ${targetUser.tag}'s info.\nError: ${e}`)
       console.log(e);
     }
 
   },
   permissions: '',
-  description:'Gets the current awards of the User.',
+  description:'Gets the current certs of the User.',
   requiredRoles: [],
 }

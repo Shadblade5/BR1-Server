@@ -2,7 +2,7 @@ const sql = require('../sqlfunctions')
 const certs = require('../info/certs.json')
 module.exports = {
   commands: ['getcerts'],
-  expectedArgs: '<@user>',
+  expectedArgs: '<@user/ID>',
   permissionError: 'You need admin permissions to run this command',
   minArgs: 1,
   maxArgs: 1,
@@ -11,23 +11,44 @@ module.exports = {
     const { guild } = message
     var member
     var targetUser
+    var memberID
+    var wrongargs=false;
     try{
       targetUser = message.mentions.users.first()
       member = guild.members.cache.get(targetUser.id)
+      memberID = targetUser.id
+      var wrongargs=false;
     }catch(e){
-      message.reply('Please specify someone with a mention to get their certs.')
-      console.log(e);
+      //console.log(e);
+      var wrongargs=true;
+    }
+      if(wrongargs){
+        try{
+          memberID = arguments[0]
+          member = guild.members.cache.get(memberID)
+          targetUser = member.user
+          var wrongargs=false;
+        }catch(e){
+          //console.log(e);
+          var wrongargs=true;
+        }
+      }
+    if(wrongargs){
+      message.reply('Please specify someone to run the command on')
       return;
     }
+    //code starts here
+
+
     var currentcerts
     try{
-      currentcerts = await sql.getMedals(targetUser.id)
+      currentcerts = await sql.getCerts(memberID)
       for(var i=0;i<currentcerts.length;i++){
-        currentcerts[i] = ' '+medals.name[medals.abbr.indexOf(currentcerts[i].Medal.toString())]
+        currentcerts[i] = currentcerts[i].Cert.capitalize()+' ';
       }
           message.reply(`${targetUser.tag} has the following certs:\n ${currentcerts}`)
     }catch(e){
-      message.reply(`Failed to get ${targetUser.tag}'s certs.'`)
+      message.reply(`Failed to get ${targetUser.tag}'s certs.`)
       console.log(e);
     }
 

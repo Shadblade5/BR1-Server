@@ -6,17 +6,31 @@ const sql = require('./sqlfunctions')
 //require('./teamspeak');
 const loadCommands = require('./commands/load-commands')
 
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
 
 client.on('ready', async () => {
-  console.log('The client is ready!')
-  await sql.connectToSQLServer();
-  loadCommands(client);
-})
+  console.log('Discord client is ready!')
 
-client.login(config.token);
+  do {
+    var connection = false
+    connection = await sql.connectToSQLServer()
+    if(!connection){
+      await sleep(10000);
+    }
+  } while (!connection)
 
-String.prototype.capitalize = function() {
-    return this.charAt(0).toUpperCase() + this.slice(1);
+    loadCommands(client);
+    console.log('Ready!')
+  })
+
+  client.login(config.token);
+
+  String.prototype.capitalize = function() {
+      return this.charAt(0).toUpperCase() + this.slice(1);
 }
 
 /*

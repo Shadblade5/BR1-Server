@@ -2,7 +2,7 @@ const sql = require('../sqlfunctions')
 const certs = require('../info/certs.json')
 module.exports = {
   commands: ['certify'],
-  expectedArgs: '<@user> <certification>',
+  expectedArgs: '<@user/ID> <certification>',
   permissionError: 'You need admin permissions to run this command',
   minArgs: 2,
   maxArgs: 2,
@@ -11,13 +11,34 @@ module.exports = {
     const { guild } = message
     var member
     var targetUser
+    var memberID
+    var wrongargs=false;
     try{
       targetUser = message.mentions.users.first()
       member = guild.members.cache.get(targetUser.id)
+      memberID = targetUser.id
+      var wrongargs=false;
     }catch(e){
-      message.reply('Please specify someone with a mention to give them an certification.')
+      //console.log(e);
+      var wrongargs=true;
+    }
+      if(wrongargs){
+        try{
+          memberID = arguments[0]
+          member = guild.members.cache.get(memberID)
+          targetUser = member.user
+          var wrongargs=false;
+        }catch(e){
+          //console.log(e);
+          var wrongargs=true;
+        }
+      }
+    if(wrongargs){
+      message.reply('Please specify someone to run the command on')
       return;
     }
+
+
     arguments.shift()
     const cert = arguments[0].toLowerCase()
     const numCert = certs.name.indexOf(cert)
@@ -33,7 +54,7 @@ module.exports = {
       var currentCerts = []
       var currentCertnum
       try{
-          currentCertsSql = await sql.getCerts(targetUser.id)
+          currentCertsSql = await sql.getCerts(memberID)
           currentCertsSql.forEach((element,i) => {
           currentCerts[i] = element.Certification.toString();
         });
@@ -47,7 +68,7 @@ module.exports = {
         return;
       }else{
         try{
-          await sql.addCert(targetUser.id,cert)
+          await sql.addCert(memberID,cert)
           message.reply(`${targetUser.tag} has been certified for ${certName.capitalize()}.`)
         }catch(e){
           console.log(e)
@@ -60,5 +81,5 @@ module.exports = {
   },
   permissions: '',
   description:'Gives the user a Certification',
-  requiredRoles: [],
+  requiredRoles: ['Head of Battalion','Co-Head of Battalion'],
 }

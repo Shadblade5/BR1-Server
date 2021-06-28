@@ -1,8 +1,8 @@
 const sql = require('../sqlfunctions')
 const medals = require('../info/medals.json')
 module.exports = {
-  commands: ['revoke'],
-  expectedArgs: '<@user> <award>',
+  commands: ['revokeaward'],
+  expectedArgs: '<@user/ID> <award>',
   permissionError: 'You need admin permissions to run this command',
   minArgs: 2,
   maxArgs: 2,
@@ -11,14 +11,35 @@ module.exports = {
     const { guild } = message
     var member
     var targetUser
+    var memberID
+    var wrongargs=false;
     try{
       targetUser = message.mentions.users.first()
       member = guild.members.cache.get(targetUser.id)
+      memberID = targetUser.id
+      var wrongargs=false;
     }catch(e){
-      message.reply('Please specify someone with a mention to give them an award.')
-      console.log(e);
+      //console.log(e);
+      var wrongargs=true;
+    }
+      if(wrongargs){
+        try{
+          memberID = arguments[0]
+          member = guild.members.cache.get(memberID)
+          targetUser = member.user
+          var wrongargs=false;
+        }catch(e){
+          //console.log(e);
+          var wrongargs=true;
+        }
+      }
+    if(wrongargs){
+      message.reply('Please specify someone to run the command on')
       return;
     }
+
+
+
     arguments.shift()
     const award = arguments[0].toUpperCase()
     const numMedal = medals.abbr.indexOf(award)
@@ -58,5 +79,5 @@ module.exports = {
   },
   permissions: '',
   description:'Revokes the user an award',
-  requiredRoles: [],
+  requiredRoles: ['Officer','Admin-NCO'],
 }
