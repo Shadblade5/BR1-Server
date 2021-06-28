@@ -11,6 +11,7 @@ module.exports = {
     const { guild } = message
     var member
     var targetUser
+
     var memberID
     var wrongargs=false;
     try
@@ -115,6 +116,7 @@ module.exports = {
       oldrole = guild.roles.cache.find((role) => {
         return role.name === currentRank
       });
+
       member.roles.add(role);
       member.roles.remove(oldrole);
 
@@ -124,4 +126,5 @@ module.exports = {
   permissions: '',
   description:'Gives a user a specific rank',
   requiredRoles: ['Officer'],
+
 }

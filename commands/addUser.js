@@ -1,7 +1,9 @@
 const sql = require('../sqlfunctions')
 module.exports = {
   commands: ['adduser'],
+
   expectedArgs: '<@user/ID> <TeamspeakID>',
+
   permissionError: 'You need admin permissions to run this command',
   minArgs: 1,
   maxArgs: 2,
@@ -68,5 +70,6 @@ module.exports = {
   },
   permissions: '',
   description:'Adds a new user to the BR1 Database. TS3 ID is optional.',
+
   requiredRoles: ['Officer','Admin-NCO','Senior-NCO','NCO'],
 }

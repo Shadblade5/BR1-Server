@@ -1,11 +1,14 @@
 const sql = require('../sqlfunctions')
 module.exports = {
   commands: ['removeuser'],
+
   expectedArgs: '<@user/ID>',
+
   permissionError: 'You need admin permissions to run this command',
   minArgs: 1,
   maxArgs: 1,
   callback: async(message, arguments, text) => {
+
 
     const { guild } = message
     var member
@@ -49,5 +52,6 @@ module.exports = {
   },
   permissions: '',
   description:'Removes a existing member from the BR1 Database.',
+
   requiredRoles: ['Officer'],
 }

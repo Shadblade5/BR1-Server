@@ -47,7 +47,6 @@ async function addUser(discordName,DiscordID,TeamspeakID='',rank){
   }
 
 async function removeUser(discordName,DiscordID){
-
     const sql = 'DELETE FROM master WHERE DiscordID = '+connection.escape(DiscordID)+'';
       try{
         var result = await query(sql);
@@ -142,6 +141,7 @@ async function removeCert(DiscordID,cert){
   }
   return result;
 }
+
 
 async function addMedal(DiscordID,medal){
   try{

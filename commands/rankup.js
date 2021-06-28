@@ -91,6 +91,7 @@ module.exports = {
 
         member.roles.add(role)
         member.roles.remove(oldrole)
+
         message.reply(`${targetUser.tag} now has the rank ${newrank}`)
       return;
 
@@ -98,4 +99,5 @@ module.exports = {
   permissions: '',
   description:'Ranks the user up to the next rank.',
   requiredRoles: ['NCO','Admin-NCO','Officer'],
+
 }
