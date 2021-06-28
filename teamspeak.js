@@ -21,8 +21,7 @@ const teamspeak = new TeamSpeak({
   nickname: "ServerMonitor"
 });
 
-
-var shadts = 'Grd6QMFVyHf7pPFGsqazWFt8PK8='
+const shadid = 'Grd6QMFVyHf7pPFGsqazWFt8PK8='
 
 
 const clientListFromSGID = async (sgid) => {
@@ -31,29 +30,56 @@ const clientListFromSGID = async (sgid) => {
 
 teamspeak.on("ready", async () => {
   console.log(`Ready on ${hostIP}:${sPort}`);
-/*  var servergroup = await teamspeak.getServerGroupByName("Leadership Cert");
-  //console.log(servergroup);
-  // const serverGroup = await teamspeak.serverGroupList();
-   var clientList = await teamspeak.serverGroupClientList(servergroup);
 
-  // console.log(clientList);*/
 });
 
 teamspeak.on("error", e => {
   console.log(e)
 });
 
-async function addClientToServerGroup(ts3uid,sgid)
+async function addClientToServerGroups(ts3uid,sgid)
 {
  try{
   var client = await teamspeak.getClientByUid(ts3uid)
-  await client.addGroups(sgid)
+
+    await client.addGroups(sgid)
+  
+ }catch(e)
+ {
+
+   console.log(`\n${e}`)
+   throw(e)
+  }
+}
+
+async function removeClientFromServerGroups(ts3uid,sgid)
+{
+ try{
+  var client = await teamspeak.getClientByUid(ts3uid)
+  await client.delGroups(sgid)
  }catch(e)
  {
    console.log(`\n${e}`)
+   throw(e)
  }
 }
 
+async function getClientServerGroups(ts3uid)
+{
+ try{
+  var client = await teamspeak.getClientByUid(ts3uid)
+  var servergroups = await client.servergroups
+  console.log(servergroups)
+ }catch(e)
+ {
+   console.log(`\n${e}`)
+   throw(e)
+ }
+}
+
+
+
 module.exports = {
-addClientToServerGroup
+addClientToServerGroups,
+removeClientFromServerGroups
 };
