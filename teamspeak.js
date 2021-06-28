@@ -27,12 +27,11 @@ const shadid = 'Grd6QMFVyHf7pPFGsqazWFt8PK8='
 const clientListFromSGID = async (sgid) => {
   return teamspeak.serverGroupClientList(sgid);
 }
-
-teamspeak.on("ready", async () => {
-  console.log(`Ready on ${hostIP}:${sPort}`);
-
-});
-
+async function startTeamspeak(){
+  teamspeak.on("ready", async () => {
+    console.log(`Ready on ${hostIP}:${sPort}`);
+  });
+}
 teamspeak.on("error", e => {
   console.log(e)
 });
@@ -43,7 +42,7 @@ async function addClientToServerGroups(ts3uid,sgid)
   var client = await teamspeak.getClientByUid(ts3uid)
 
     await client.addGroups(sgid)
-  
+
  }catch(e)
  {
 
@@ -80,6 +79,7 @@ async function getClientServerGroups(ts3uid)
 
 
 module.exports = {
+startTeamspeak,
 addClientToServerGroups,
 removeClientFromServerGroups
 };
