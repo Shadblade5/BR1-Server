@@ -1,3 +1,4 @@
 {
-  "name": ["leadership","medical","engineering","communication","marksman","mortarcrew","heavyweapons","armoredcrew","aircrew"]
+  "name": ["Leadership","Medical","Engineering","Communication","Marksman","Mortar Crew","Heavy Weapons","Armored Crew","Air Crew"]
+  "abbr": ["L","M","E","C","M","MC","HW","AC","AAC"]
 }

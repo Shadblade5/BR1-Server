@@ -40,13 +40,10 @@ module.exports = {
 
 
     arguments.shift()
-    const cert = arguments[0].toLowerCase()
-    const numCert = certs.name.indexOf(cert)
-    const certName = cert
-    var certnames = []
-    for(var i=0;i<certs.name.length;i++){
-      certnames[i] = ' '+certs.name[i].capitalize()
-    }
+    var certName = arguments[0].capitalize()
+    var numCert = certs.name.indexOf(certName)
+    var certabbr
+
     if(numCert<0){
       message.reply(`Invalid Certification. Here is a list of valid Certifications: \n${certnames}`)
       return;
@@ -54,27 +51,25 @@ module.exports = {
       var currentCerts = []
       var currentCertnum
       try{
-          currentCertsSql = await sql.getCerts(memberID)
-          currentCertsSql.forEach((element,i) => {
-          currentCerts[i] = element.Certification.toString();
-        });
-          currentCertnum = currentCerts.indexOf(cert)
+          certabbr = await sql.getCerts(memberID)
+          certabbr.forEach((element,i) => {
+          currentCerts[i] = element.Cert.toString();});
+          currentCertnum = currentCerts.indexOf(abbr)
       }catch(e){
         message.reply(e)
         console.log(e)
       }
       if(0<=currentCertnum){
-        message.reply(`${targetUser.tag} already has the ${certName.capitalize()} Certification.`)
+        message.reply(`${targetUser.tag} already has the ${certName} Certification.`)
         return;
       }else{
         try{
-          await sql.addCert(memberID,cert)
-          message.reply(`${targetUser.tag} has been certified for ${certName.capitalize()}.`)
+          await sql.addCert(memberID,certabbr)
+          message.reply(`${targetUser.tag} has been certified for ${certabbr}.`)
         }catch(e){
           console.log(e)
           message.reply(e)
         }
-
       }
     }
 
