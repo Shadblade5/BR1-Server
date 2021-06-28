@@ -97,5 +97,5 @@ module.exports = {
   },
   permissions: '',
   description:'Ranks the user up to the next rank.',
-  requiredRoles: ['Admin-NCO','Officer'],
+  requiredRoles: ['NCO','Admin-NCO','Officer'],
 }
