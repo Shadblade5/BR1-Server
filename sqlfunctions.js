@@ -32,19 +32,33 @@ async function connectToSQLServer(){
     return connected
   }
 }
-//async function getroleID()
-//(DiscordName, DiscordID, TeamspeakID, rank)
+
+async function getTS3ID(DiscordID){
+    const qts3 = 'SELECT TS3ID FROM master WHERE DiscordID = '+connection.escape(DiscordID);
+    try{
+      var result = await query(qts3);
+    }catch(e){
+      console.log(e)
+      result = 'None'
+      throw('Failed to query Rank')
+    }
+    return result[0].Rank;
+  }
+
 async function addUser(discordName,DiscordID,TeamspeakID='',rank){
   const sql = 'INSERT INTO master VALUES ('+connection.escape(discordName)+', '+connection.escape(DiscordID)+', '+connection.escape(TeamspeakID)+', '+connection.escape(rank)+')';
-    try{
+    try
+    {
       var result = await query(sql);
       console.log(discordName+' was successfully added to the database');
-    }catch(e){
+    }catch(e)
+    {
       result = 'None'
       console.log(e)
       throw('User already exists in the database.');
     }
-  }
+  
+}
 
 async function removeUser(discordName,DiscordID){
     const sql = 'DELETE FROM master WHERE DiscordID = '+connection.escape(DiscordID)+'';

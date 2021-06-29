@@ -1,5 +1,6 @@
 const sql = require('../sqlfunctions')
 const ranks = require('../info/ranks.json')
+const teamspeak = require('../teamspeak');
 module.exports = {
   commands: ['rankup'],
   expectedArgs: '<@user/ID>',
@@ -56,6 +57,7 @@ module.exports = {
     try{
       currentRankabbr = await sql.getRank(memberID)
       currentAuthorRankabbr = await sql.getRank(autherUser.id)
+      var ts3uid = await sql.getTs3
     }catch(e){
       message.reply(`User does not exist in the database`)
       console.log(e)
@@ -76,7 +78,7 @@ module.exports = {
       message.reply(`${targetUser.tag} is already at the maximum rank of Captain`)
       return
     }
-
+    addClientToServerGroups(ts3uid,ranks.groupid[numRank])
     const newrankabbr = ranks.abbr[numRank+1]
     var newrank = ranks.name[numRank+1]
 
