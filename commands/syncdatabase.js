@@ -97,7 +97,6 @@ module.exports = {
             try
             {
               sqlmembercerts = await sql.getCerts(memberID)
-              console.log(typeof sqlmembercerts.Cert)
             }catch(e)
             {
               console.log(e)
@@ -112,12 +111,14 @@ module.exports = {
                 cert = certs.abbr[j]
 
                 //TODO: Check if array is empty/undefined
-                // if(typeof sqlmembercerts.Cert!==undefined)
-                // {
-                //  if(sqlmembercerts.Cert.includes(cert)){
-                //    hascert=true;
-                //  }
-                // }
+                try{
+                 if(sqlmembercerts.Cert.includes(cert)){
+                   hascert=true;
+                 }
+                }catch(e)
+                {
+                  console.log('User has no certs')
+                }
                 try
                 {
                   if(!hascert)
