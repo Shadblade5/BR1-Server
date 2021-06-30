@@ -50,7 +50,7 @@ module.exports = {
       currentawards = await sql.getMedals(targetUser.id)
       currentcerts = await sql.getCerts(targetUser.id)
       for(var i=0;i<currentcerts.length;i++){
-        currentcerts[i] = ' '+currentcerts[i].Cert.capitalize();
+        currentcerts[i] = ' '+ certs.name[certs.abbr.indexOf(currentcerts[i].Cert.toString())];
       }
       for(var i=0;i<currentawards.length;i++){
         currentawards[i] = ' '+medals.name[medals.abbr.indexOf(currentawards[i].Medal.toString())]

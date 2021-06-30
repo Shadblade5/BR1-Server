@@ -13,18 +13,15 @@ function sleep(ms) {
   });
 }
 
-
 client.on('ready', async () => {
-  console.log('Discord client is ready!')
+  console.log('Discord client has started')
+  await sleep(5000)
 
-  do {
-    var connection = false
-    connection = await sql.connectToSQLServer()
-    if(!connection){
-      await sleep(10000);
+    try{
+    await sql.connectToSQLServer()
+    }catch(e){
+      console.log(e)
     }
-  } while (!connection)
-
     loadCommands(client);
     console.log('Ready!')
 })

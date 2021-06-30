@@ -54,7 +54,7 @@ async function addUser(discordName,DiscordID,TeamspeakID='',rank){
     }catch(e)
     {
       result = 'None'
-      console.log(e)
+      //console.log(e)
       throw('User already exists in the database.');
     }
   
@@ -134,7 +134,7 @@ async function updateRank(DiscordID,rank){
 
 async function addCert(DiscordID,cert){
   try{
-  const icert = 'INSERT INTO certifications (DiscordID, Certification) VALUES ('+connection.escape(DiscordID)+', '+ connection.escape(cert)+')';
+  const icert = 'INSERT INTO certifications (DiscordID, Cert) VALUES ('+connection.escape(DiscordID)+', '+ connection.escape(cert)+')';
   var result = await query(icert);
   }catch(e){
     console.log(e)
@@ -181,6 +181,18 @@ async function removeMedal(DiscordID,medal){
   return result;
 }
 
+async function getDiscordIDs(){
+  try{
+  const rDiscordID = 'SELECT DiscordID FROM master';
+  var result = await query(rDiscordID);
+  }catch(e){
+    console.log(e)
+    result = 'None'
+    throw("Failed to get IDs")
+  }
+  return result;
+}
+
 async function query(sql){
   try{
     var result = await db.query(connection,sql);
@@ -201,6 +213,8 @@ module.exports = {
   addMedal,
   removeMedal,
   addUser,
-  removeUser
+  removeUser,
+  getTS3ID,
+  getDiscordIDs
 
 };

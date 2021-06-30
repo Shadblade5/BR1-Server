@@ -100,7 +100,7 @@ module.exports = (client, commandOptions) => {
 
         // Ensure the user has the required roles
 
-        var hasRole = false;
+        var hasRole = true;
 
         for (const requiredRole of requiredRoles) {
           const role = guild.roles.cache.find(
@@ -108,16 +108,16 @@ module.exports = (client, commandOptions) => {
           )
 
 
-          if (member.roles.cache.has(role.id)) {
-            hasRole = true;
+          if (!member.roles.cache.has(role.id)) {
+            hasRole = false;
           }
         }
-
         if(!hasRole)
         {
-          message.reply(`You must have the "${requiredRole}" role to use this command.`)
+          message.reply(`You must have the "${requiredRoles}" roles to use this command.`)
           return
         }
+
         // Split on any number of spaces
         const arguments = content.split(/[ ]+/)
 
