@@ -1,5 +1,5 @@
 //import { TeamSpeak, QueryProtocol } from "./ts3-nodejs-library/src/TeamSpeak"
-const {TeamSpeak, QueryProtocol} = require("ts3-nodejs-library");
+const { TeamSpeak, QueryProtocol } = require("ts3-nodejs-library");
 
 const config = require('./config.json')
 //const mysql = require('mysql');
@@ -23,63 +23,62 @@ const teamspeak = new TeamSpeak({
 
 const shadid = 'Grd6QMFVyHf7pPFGsqazWFt8PK8='
 
-
 const clientListFromSGID = async (sgid) => {
-  return teamspeak.serverGroupClientList(sgid);
+  teamspeak.serverGroupClientList(sgid).then((response) => {
+    return response
+  }, reject => {
+    console.error(reject)
+    return null
+  })
 }
-async function startTeamspeak(){
+
+async function startTeamspeak() {
   teamspeak.on("ready", async () => {
     console.log(`Ready on ${hostIP}:${sPort}`);
   });
 }
+
 teamspeak.on("error", e => {
-  console.log(e)
+  console.error('Failed to connect to teamspeak')
+  console.error(e)
 });
 
-async function addClientToServerGroups(ts3uid,sgid)
-{
- try{
-  var client = await teamspeak.getClientByUid(ts3uid)
-
-    await client.addGroups(sgid)
-
- }catch(e)
- {
-
-   console.log(`\n${e}`)
-   throw(e)
-  }
+async function addClientToServerGroups(ts3uid, sgid) {
+  teamspeak.getClientByUid(ts3uid).then((response) => {
+    response.addGroups(sgid).catch(reason => {
+      console.error(reason)
+    })
+  }, reject => {
+    console.error(reject)
+  })
 }
 
-async function removeClientFromServerGroups(ts3uid,sgid)
-{
- try{
-  var client = await teamspeak.getClientByUid(ts3uid)
-  await client.delGroups(sgid)
- }catch(e)
- {
-   console.log(`\n${e}`)
-   throw(e)
- }
+async function removeClientFromServerGroups(ts3uid, sgid) {
+  teamspeak.getClientByUid(ts3uid).then((response) => {
+    response.delGroups(sgid).catch(reason => {
+      console.error(reason)
+    })
+  }, reject => {
+    console.error(reject)
+  })
 }
 
-async function getClientServerGroups(ts3uid)
-{
- try{
-  var client = await teamspeak.getClientByUid(ts3uid)
-  var servergroups = await client.servergroups
-  console.log(servergroups)
- }catch(e)
- {
-   console.log(`\n${e}`)
-   throw(e)
- }
+async function getClientServerGroups(ts3uid) {
+  teamspeak.getClientByUid(ts3uid).then((clientresp) => {
+    clientresp.servergroups.then((svgroupresp) => {
+      console.log(svgroupresp)
+    }, reject => {
+      console.error(reject)
+    })
+  }, reject => {
+    console.error(reject)
+  })
 }
 
 
 
 module.exports = {
-startTeamspeak,
-addClientToServerGroups,
-removeClientFromServerGroups
+  startTeamspeak,
+  addClientToServerGroups,
+  removeClientFromServerGroups
 };
