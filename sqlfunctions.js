@@ -215,6 +215,7 @@ module.exports = {
   addUser,
   removeUser,
   getTS3ID,
-  getDiscordIDs
+  getDiscordIDs,
+  updateTS3ID
 
 };

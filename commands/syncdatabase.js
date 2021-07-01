@@ -2,7 +2,8 @@ const sql = require('../sqlfunctions')
 const teamspeak = require('../teamspeak')
 const ranks = require('../info/ranks.json')
 const certs = require('../info/certs.json')
-const getcerts = require('../CommandArchive/getcerts')
+const { getStringDiff } = require('../discordbot')
+
 module.exports = {
   commands: ['syncDB'],
   expectedArgs: '',
@@ -17,7 +18,6 @@ module.exports = {
 
     //first update all ranks and cert from discord
 
-    var shad = '208119044308467712';
     var members
     
     const unitmemberroleid = '728023335744831549'
@@ -25,36 +25,43 @@ module.exports = {
     var numranked = 0
     var numcerted = 0
     
+    
+    var hit = false
+    
+    var clients
+    var reply = ' '
+    
     var sqlids
     try{
       sqlids = await sql.getDiscordIDs()
+      clients = await teamspeak.getclients()
     }catch(e)
     {
-      console.log(e)
+      console.exception(e)
     }
-
-    
     try
     {
 
       members = await guild.members.fetch()
 
-      members.forEach( async(member)=>  {
-
+      members.forEach( async(member)=>  
+      {
+        
         if (member.roles.cache.has(unitmemberroleid)) {
+          var ts3id = 'Not Found'
           var memberID
-          var targetUser
-          var discordName
+          var discordtag
+          var discordname
           var inDB = false;
           var rank = 'PVT'
           var sqlmembercerts = [null]
           var hascert = false;
           var cert = ' '
 
-          targetUser = member.user
           memberID = member.user.id
-          discordName = targetUser.tag 
-          
+          discordtag = member.user.tag 
+          discordname = discordtag.split('#')
+
           try
           {
             sqlids.forEach(id => 
@@ -65,17 +72,15 @@ module.exports = {
             })
             if(!inDB)
             {
-              await sql.addUser(discordName,memberID,teamspeakID=' ',rank).catch(console.log)
-              numadded++
+              numadded=numadded+1
+              await sql.addUser(discordtag,memberID,teamspeakID=' ',rank)
+              reply += `${discordtag} was succefully added to the database\n`
             }
           }catch(e)
           {
-            console.log(e) 
+            console.exception(e) 
           }
-
-
-          //console.log('Done with adding users')
-         
+        
           member.roles.cache.each( async(role) =>
           {
              //update ranks
@@ -85,11 +90,12 @@ module.exports = {
               {
                 rank = ranks.abbr[j]
                 try{
+                  numranked=numranked+1
                   await sql.updateRank(memberID,rank)
-                  numranked++
+                  reply += `${discordtag} was ranked up to ${rank}\n`                  
                 }catch(e)
                 {
-                console.log(e)
+                console.exception(e)
                 }
               }
             }
@@ -99,7 +105,7 @@ module.exports = {
               sqlmembercerts = await sql.getCerts(memberID)
             }catch(e)
             {
-              console.log(e)
+              console.exception(e)
             }
 
             //update certs
@@ -114,34 +120,56 @@ module.exports = {
                 try{
                  if(sqlmembercerts.Cert.includes(cert)){
                    hascert=true;
-                 }
-                }catch(e)
-                {
-                  console.log('User has no certs')
-                }
-                try
-                {
-                  if(!hascert)
+                  }else
                   {
+                    numcerted= numcerted+1
                     await sql.addCert(memberID,cert)
-                    numcerted++
+                    reply += `${discordtag} was assigned the cert ${cert}}\n`     
                   }
                 }catch(e)
                 {
-                  throw(e)
+                  //console.log(`User does not have the ${cert}`)
                 }
               }
             }
-          })      
+          })    
 
+          //Fill TS3 IDs
+          var diff = 0
+          console.log("Start TS3 ID")
+          clients.forEach(client =>
+          {
+            try
+            {
+              diff = getStringDiff(discordname[0].toString(), client.clientNickname.toString())
+            }catch(e)
+            {
+              console.exception(e)
+            }
+            if(diff==0)
+            {
+              ts3id = client.clientUniqueIdentifier               
+            }
+          })
+          try
+          {
+            sql.updateTS3ID(memberID,ts3id)
+          }catch(e)
+          {
+            console.exception(e)
+          }
         }
-      
       })
-      message.reply(`Command finished. \n${numadded} members were added to the database \n${numranked} member's ranks were updated\n${numcerted} member's certs were updated`)
+
+      message.reply(`Command finished.\n`)
     }catch(e){
-      console.log(e)
+      console.exception(e)
     }
     
+
+
+
+
     //blowout ts3's ranks and certs
     //pull awards from Ts3
     //push ranks and certs to ts3

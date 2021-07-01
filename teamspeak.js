@@ -1,9 +1,5 @@
-//import { TeamSpeak, QueryProtocol } from "./ts3-nodejs-library/src/TeamSpeak"
 const {TeamSpeak, QueryProtocol} = require("ts3-nodejs-library");
-
 const config = require('./config.json')
-//const mysql = require('mysql');
-require('dotenv').config();
 const TS3PASS = config.TS3PASS
 const hostIP = config.TS3IP
 
@@ -21,20 +17,23 @@ const teamspeak = new TeamSpeak({
   nickname: "ServerMonitor"
 });
 
+teamspeak.on("ready", () => {
+  console.log("Teamspeak connected")
+})
+teamspeak.on("error", () => {
+  console.log("Teamspeak failed to connect")
+})
 const shadid = 'Grd6QMFVyHf7pPFGsqazWFt8PK8='
 
+function startTSconnection()
+{
 
-const clientListFromSGID = async (sgid) => {
+}
+
+const clientListFromSGID = async (sgid) => 
+{
   return teamspeak.serverGroupClientList(sgid);
 }
-async function startTeamspeak(){
-  teamspeak.on("ready", async () => {
-    console.log(`Ready on ${hostIP}:${sPort}`);
-  });
-}
-teamspeak.on("error", e => {
-  console.log(e)
-});
 
 async function addClientToServerGroups(ts3uid,sgid)
 {
@@ -67,8 +66,9 @@ async function getClientServerGroups(ts3uid)
 {
  try{
   var client = await teamspeak.getClientByUid(ts3uid)
-  var servergroups = await client.servergroups
-  console.log(servergroups)
+  var servergroups 
+  servergroups = await client.servergroups
+  return servergroups
  }catch(e)
  {
    console.log(`\n${e}`)
@@ -76,10 +76,18 @@ async function getClientServerGroups(ts3uid)
  }
 }
 
+async function getclients()
+{
+  var clients
+  return clients = await teamspeak.clientDbList()
+}
 
 
 module.exports = {
-startTeamspeak,
-addClientToServerGroups,
-removeClientFromServerGroups
+  teamspeak,
+  startTSconnection,
+  addClientToServerGroups,
+  getClientServerGroups,
+  getclients,
+  removeClientFromServerGroups
 };

@@ -23,7 +23,8 @@ module.exports = {
       //console.log(e);
       var wrongargs=true;
     }
-      if(wrongargs){
+      if(wrongargs)
+      {
         try{
           memberID = arguments[0]
           member = guild.members.cache.get(memberID)
