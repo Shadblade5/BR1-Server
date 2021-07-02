@@ -37,7 +37,7 @@ module.exports = {
       clients = await teamspeak.getclients()
     }catch(e)
     {
-      console.exception(e)
+      console.error(e)
     }
     try
     {
@@ -54,7 +54,7 @@ module.exports = {
           var discordname
           var inDB = false;
           var rank = 'PVT'
-          var sqlmembercerts = [null]
+          var sqlmembercerts
           var hascert = false;
           var cert = ' '
 
@@ -78,7 +78,7 @@ module.exports = {
             }
           }catch(e)
           {
-            console.exception(e) 
+            console.error(e) 
           }
         
           member.roles.cache.each( async(role) =>
@@ -95,17 +95,9 @@ module.exports = {
                   reply += `${discordtag} was ranked up to ${rank}\n`                  
                 }catch(e)
                 {
-                console.exception(e)
+                console.error(e)
                 }
               }
-            }
-
-            try
-            {
-              sqlmembercerts = await sql.getCerts(memberID)
-            }catch(e)
-            {
-              console.exception(e)
             }
 
             //update certs
@@ -117,55 +109,49 @@ module.exports = {
                 cert = certs.abbr[j]
 
                 //TODO: Check if array is empty/undefined
-                try{
-                 if(sqlmembercerts.Cert.includes(cert)){
-                   hascert=true;
-                  }else
-                  {
-                    numcerted= numcerted+1
-                    await sql.addCert(memberID,cert)
-                    reply += `${discordtag} was assigned the cert ${cert}}\n`     
-                  }
+                try
+                {
+                  await sql.addCert(memberID,cert)
+                  console.log(`${discordtag} was assigned the cert ${cert}\n`)
                 }catch(e)
                 {
-                  //console.log(`User does not have the ${cert}`)
+                  console.error(e)
                 }
               }
             }
           })    
 
           //Fill TS3 IDs
-          var diff = 0
-          console.log("Start TS3 ID")
-          clients.forEach(client =>
-          {
-            try
-            {
-              diff = getStringDiff(discordname[0].toString(), client.clientNickname.toString())
-            }catch(e)
-            {
-              console.exception(e)
-            }
-            if(diff==0)
-            {
-              ts3id = client.clientUniqueIdentifier               
-            }
-          })
-          try
-          {
-            sql.updateTS3ID(memberID,ts3id)
-          }catch(e)
-          {
-            console.exception(e)
-          }
+          // var diff = 0
+          // clients.forEach(client =>
+          // {
+          //   try
+          //   {
+          //     diff = getStringDiff(discordname[0].toString(), client.clientNickname.toString())
+          //   }catch(e)
+          //   {
+          //     console.error(e)
+          //   }
+          //   if(diff==0)
+          //   {
+          //     ts3id = client.clientUniqueIdentifier               
+          //   }
+          // })
+          // try
+          // {
+          //   sql.updateTS3ID(memberID,ts3id)
+          // }catch(e)
+          // {
+          //   console.error(e)
+          // }
         }
       })
-
       message.reply(`Command finished.\n`)
     }catch(e){
-      console.exception(e)
+      console.error(e)
     }
-    
+    var groupids = ranks.groupid.concat(certs.groupid)
+    teamspeak.removeClientFromServerGroups(ts3id,groupids)
 
 
 

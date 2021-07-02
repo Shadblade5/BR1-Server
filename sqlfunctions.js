@@ -34,15 +34,16 @@ async function connectToSQLServer(){
 }
 
 async function getTS3ID(DiscordID){
-    const qts3 = 'SELECT TS3ID FROM master WHERE DiscordID = '+connection.escape(DiscordID);
+    const qts3 = 'SELECT TeamspeakID FROM master WHERE DiscordID = '+connection.escape(DiscordID);
     try{
       var result = await query(qts3);
-    }catch(e){
+    }catch(e)
+    {
       console.log(e)
       result = 'None'
       throw('Failed to query Rank')
     }
-    return result[0].Rank;
+    return result[0].TeamspeakID;
   }
 
 async function addUser(discordName,DiscordID,TeamspeakID='',rank){
@@ -96,14 +97,14 @@ async function getCerts(DiscordID){
   return result;
 }
 
-async function getMedals(DiscordID){
-  const qmedal = 'SELECT Medal FROM medals WHERE DiscordID = '+ connection.escape(DiscordID);
+async function getAwards(DiscordID){
+  const qaward = 'SELECT Award FROM awards WHERE DiscordID = '+ connection.escape(DiscordID);
   try{
-  var result = await query(qmedal);
+  var result = await query(qaward);
   }catch(e){
     console.log(e)
     result = 'None'
-    throw('Failed to query medals')
+    throw('Failed to query awards')
   }
   return result;
 }
@@ -157,26 +158,26 @@ async function removeCert(DiscordID,cert){
 }
 
 
-async function addMedal(DiscordID,medal){
+async function addAward(DiscordID,award){
   try{
-  const imedal = 'INSERT INTO medals (DiscordID, Medal) VALUES ('+connection.escape(DiscordID)+', '+ connection.escape(medal)+')';
-  var result = await query(imedal);
+  const iaward = 'INSERT INTO awards (DiscordID, Award) VALUES ('+connection.escape(DiscordID)+', '+ connection.escape(award)+')';
+  var result = await query(iaward);
   }catch(e){
     console.log(e)
     result = 'None'
-    throw("Failed to add medal")
+    throw("Failed to add award")
   }
   return result;
 }
 
-async function removeMedal(DiscordID,medal){
+async function removeAward(DiscordID,award){
   try{
-  const rmedal = 'DELETE FROM medals WHERE DiscordID = '+ connection.escape(DiscordID)+'AND Medal = '+ connection.escape(medal);
-  var result = await query(rmedal);
+  const raward = 'DELETE FROM awards WHERE DiscordID = '+ connection.escape(DiscordID)+'AND Award = '+ connection.escape(award);
+  var result = await query(raward);
   }catch(e){
     console.log(e)
     result = 'None'
-    throw("Failed to remove medal")
+    throw("Failed to remove award")
   }
   return result;
 }
@@ -206,12 +207,12 @@ module.exports = {
   connectToSQLServer,
   getRank,
   getCerts,
-  getMedals,
+  getAwards,
   updateRank,
   addCert,
   removeCert,
-  addMedal,
-  removeMedal,
+  addAward,
+  removeAward,
   addUser,
   removeUser,
   getTS3ID,

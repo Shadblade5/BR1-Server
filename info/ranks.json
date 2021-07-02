@@ -1,6 +1,6 @@
 {
   "name":["Private","Private 1st Class","Specialist 4th Class","Specialist 3rd Class","Specialist 2nd Class","Specialist 1st Class","Corporal","Sergeant","Staff Sergeant","Sergeant 1st Class","Master Sergeant","1st Sergeant","Sergeant Major","2nd Lieutenant","1st Lieutenant","Captain"],
   "abbr": ["PVT","PFC","SPC4","SPC3","SPC2","SPC1","CPL","SGT","SSGT","SFC","MSGT","1SGT","SGM","2LT","1LT","CPT"],
-  "groupid": [68,67,66,113,114,115,65,63,62,61,60,59,58,57,57,55],
+  "groupid": ["68","67","66","113","114","115","65","63","62","61","60","59","58","57","56","55"],
   "discordid": [602811990393749516,602811873192050703,661151595085561901,692299996996960262,692300100546068490,692301339224440832,602811764622753834,602811675166507008,602811520627245076,661151077345001488,661150681046056960,661149688065425429,661149403226308618,602811316968882209,602811207652474891,602811050080862228]
 }

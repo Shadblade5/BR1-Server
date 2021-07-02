@@ -1,7 +1,9 @@
 const sql = require('../sqlfunctions')
-const medals = require('../info/medals.json')
+const awards = require('../info/awards.json')
+const ranks = require('../info/ranks.json')
+const certs = require('../info/certs.json')
 const teamspeak = require('../teamspeak')
-const { getStringDiff } = require('../discordbot')
+const functions = require('../discordbot')
 module.exports = {
   commands: ['test'],
   expectedArgs: '',
@@ -39,39 +41,83 @@ module.exports = {
       message.reply('Please specify someone to run the command on')
       return;
     }
-
-    //var roles = member.roles.cache.each(role=>console.log(`Role: ${role.id}`))
-
-    var discordtag = member.user.tag  
-    var discordname = discordtag.split('#')
-    var diff
-    var hit = false
-    var difference=0
+    //---------------------------------------------------------------
+    console.log(memberID)
     var ts3id
-    var clients
-    
-    clients = await teamspeak.getclients()
-    
-    do
+    var servergroups
+
+    try
     {
-      clients.forEach(client =>
+    ts3id = await sql.getTS3ID(memberID)
+    }catch(e)
+    {
+      console.error(e)
+    }
+    console.log(ts3id)
+    try
+    {
+      servergroups = await teamspeak.getClientServerGroups(ts3id)
+    }catch(e)
+    {
+      console.error(e)
+    }
+    //console.log(servergroups)
+    var currentawards = ''
+    servergroups.forEach((groupid)=>{
+      
+      //console.log(groupid)
+      var ranknum = ranks.groupid.indexOf(groupid)
+      var certnum =  certs.groupid.indexOf(groupid)
+      var awardnum = awards.groupid.indexOf(groupid)
+      // console.log(`Rank ${ranknum}`)
+      // console.log(`Cert ${certnum}`)
+      // console.log(`Award ${awardnum}`)
+      if(ranknum>=0)
       {
-        
-        try
+        console.log(ranks.name[ranknum])
+      }
+      if(certnum>=0)
+      {
+        console.log(certs.name[certnum])
+      }
+      if(awardnum>=0)
+      {
+        sql.addAward(memberID,awards.abbr[awardnum])
+        currentawards += awards.name[awardnum] + ' '
+      }
+    })
+    message.reply(currentawards)
+    ts3id = await sql.getTS3ID(memberID)
+    var groupids = ranks.groupid.concat(certs.groupid)
+    //console.log(groupids)
+ 
+    for(const groupid of groupids)
+    {
+      await teamspeak.addClientServerGroups(ts3id,groupid).catch((e)=>console.log(e))
+    }
+    
+
+    for(const groupid of groupids)
+    {
+      await teamspeak.removeClientServerGroups(ts3id,groupid).catch((e)=>console.log(e))
+    }
+    
+    sql.getRank(memberID).then((currentrank)=>
+    {
+      var groupid = ranks.groupid[ranks.abbr.indexOf(currentrank)]
+      teamspeak.addClientServerGroups(ts3id,groupid).catch((e)=>console.log(e))
+    })
+    .then(()=>
+    {
+      sql.getCerts(memberID).then((currentcerts)=>
+      {
+        for(const cert of currentcerts)
         {
-        diff = getStringDiff(discordname[0].toString(),client.clientNickname.toString())
-        }catch(e)
-        {
-          console.log(e)
-        }
-        if(diff<=difference){
-          hit=true
-          ts3id=client.clientUniqueIdentifier        
+          groupid = certs.groupid[certs.abbr.indexOf(cert.Cert)]
+          teamspeak.addClientServerGroups(ts3id,groupid)
         }
       })
-      difference++;
-    }while(!hit)
-    message.reply(`${discordname[0]}'s Ts3id is ${ts3id}`)
+    })
   },
   permissions: '',
   description:'Is simply a test',

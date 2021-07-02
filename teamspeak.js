@@ -35,7 +35,7 @@ const clientListFromSGID = async (sgid) =>
   return teamspeak.serverGroupClientList(sgid);
 }
 
-async function addClientToServerGroups(ts3uid,sgid)
+async function addClientServerGroups(ts3uid,sgid)
 {
  try{
   var client = await teamspeak.getClientByUid(ts3uid)
@@ -45,19 +45,19 @@ async function addClientToServerGroups(ts3uid,sgid)
  }catch(e)
  {
 
-   console.log(`\n${e}`)
+   console.error(e)
    throw(e)
   }
 }
 
-async function removeClientFromServerGroups(ts3uid,sgid)
+async function removeClientServerGroups(ts3uid,sgid)
 {
  try{
   var client = await teamspeak.getClientByUid(ts3uid)
   await client.delGroups(sgid)
  }catch(e)
  {
-   console.log(`\n${e}`)
+   console.error(e)
    throw(e)
  }
 }
@@ -71,7 +71,7 @@ async function getClientServerGroups(ts3uid)
   return servergroups
  }catch(e)
  {
-   console.log(`\n${e}`)
+   console.error(e)
    throw(e)
  }
 }
@@ -86,8 +86,8 @@ async function getclients()
 module.exports = {
   teamspeak,
   startTSconnection,
-  addClientToServerGroups,
+  addClientServerGroups,
   getClientServerGroups,
   getclients,
-  removeClientFromServerGroups
+  removeClientServerGroups
 };

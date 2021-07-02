@@ -1,5 +1,5 @@
 const sql = require('../sqlfunctions')
-const medals = require('../info/medals.json')
+const awards = require('../info/awards.json')
 module.exports = {
   commands: ['award'],
   expectedArgs: '<@user/ID> <award>',
@@ -41,31 +41,31 @@ module.exports = {
 
     arguments.shift()
     const award = arguments[0].toUpperCase()
-    const numMedal = medals.abbr.indexOf(award)
-    const awardname = medals.name[numMedal]
-    if(numMedal<0){
-      message.reply(`Invalid award. Here is a list of valid awards: \n${medals.abbr}`)
+    const numAward = awards.abbr.indexOf(award)
+    const awardname = awards.name[numAward]
+    if(numAward<0){
+      message.reply(`Invalid award. Here is a list of valid awards: \n${awards.abbr}`)
       return;
     }else{
-      var currentMedals = []
-      var currentMedalNum
+      var currentAwards = []
+      var currentAwardNum
       try{
-          currentMedalsSql = await sql.getMedals(memberID)
-          currentMedalsSql.forEach((element,i) => {
-          currentMedals[i] = element.Medal.toString();
+          currentAwardsSql = await sql.getAwards(memberID)
+          currentAwardsSql.forEach((element,i) => {
+          currentAwards[i] = element.Award.toString();
         });
-          currentMedalNum = currentMedals.indexOf(award)
+          currentAwardNum = currentAwards.indexOf(award)
 
       }catch(e){
         message.reply(e)
         console.log(e)
       }
-      if(0<currentMedalNum){
+      if(0<currentAwardNum){
         message.reply(`${targetUser.tag} already has the ${awardname} award.`)
         return;
       }else{
         try{
-          await sql.addMedal(targetUser.id,award)
+          await sql.addAward(targetUser.id,award)
           message.reply(`${targetUser.tag} has been awarded the ${awardname} award.`)
         }catch(e){
           console.log(e)
