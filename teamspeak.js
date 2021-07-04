@@ -38,10 +38,7 @@ const clientListFromSGID = async (sgid) =>
 async function addClientServerGroups(ts3uid,sgid)
 {
  try{
-  var client = await teamspeak.getClientByUid(ts3uid)
-
-    await client.addGroups(sgid)
-
+  await teamspeak.getClientByUid(ts3uid).then((client)=>client.addGroups(sgid))
  }catch(e)
  {
 
@@ -53,8 +50,7 @@ async function addClientServerGroups(ts3uid,sgid)
 async function removeClientServerGroups(ts3uid,sgid)
 {
  try{
-  var client = await teamspeak.getClientByUid(ts3uid)
-  await client.delGroups(sgid)
+  await teamspeak.getClientByUid(ts3uid).then((client)=>client.delGroups(sgid))
  }catch(e)
  {
    console.error(e)
@@ -65,10 +61,24 @@ async function removeClientServerGroups(ts3uid,sgid)
 async function getClientServerGroups(ts3uid)
 {
  try{
-  var client = await teamspeak.getClientByUid(ts3uid)
   var servergroups 
-  servergroups = await client.servergroups
-  return servergroups
+  if(ts3uid!='Not Found'|| ts3uid != ' '){
+  await teamspeak.getClientByUid(ts3uid).then((client)=>{
+    console.log(client)
+    try
+    {
+      servergroups = client.servergroups
+    }catch(e)
+    {
+      throw(e)
+    }
+    console.log(servergroups)
+    return servergroups
+  })
+  }else
+  {
+    throw('Teamspeak ID not set')
+  }
  }catch(e)
  {
    console.error(e)

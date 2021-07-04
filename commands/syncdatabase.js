@@ -2,15 +2,18 @@ const sql = require('../sqlfunctions')
 const teamspeak = require('../teamspeak')
 const ranks = require('../info/ranks.json')
 const certs = require('../info/certs.json')
+const awards = require('../info/awards.json')
 const { getStringDiff } = require('../discordbot')
 
-module.exports = {
+module.exports = 
+{
   commands: ['syncDB'],
   expectedArgs: '',
   permissionError: 'You need admin permissions to run this command',
   minArgs: 0,
   maxArgs: 0,
-  callback: async(message, arguments, text) => {
+  callback: async(message, arguments, text) => 
+  {
 
     const { guild } = message
     
@@ -32,7 +35,8 @@ module.exports = {
     var reply = ' '
     
     var sqlids
-    try{
+    try
+    {
       sqlids = await sql.getDiscordIDs()
       clients = await teamspeak.getclients()
     }catch(e)
@@ -47,8 +51,9 @@ module.exports = {
       members.forEach( async(member)=>  
       {
         
-        if (member.roles.cache.has(unitmemberroleid)) {
-          var ts3id = 'Not Found'
+        if (member.roles.cache.has(unitmemberroleid)) 
+        {
+          var ts3id
           var memberID
           var discordtag
           var discordname
@@ -144,21 +149,75 @@ module.exports = {
           // {
           //   console.error(e)
           // }
-        }
-      })
-      message.reply(`Command finished.\n`)
-    }catch(e){
+          //pull awards from Ts3
+
+          try
+          {
+            ts3id = await sql.getTS3ID(memberID)
+          }catch(e)
+          {
+            console.error(e)
+          }
+          if(ts3id != ' '|| ts3uid != 'Not Found')
+          {
+            await teamspeak.getClientServerGroups(ts3id).then((servergroups)=>
+              {
+                for (const servergroup of servergroups)
+                {
+                  var awardnum = awards.groupid.indexOf(servergroup)
+                  if(awardnum>=0)
+                  {
+                    var award = awards.abbr[awardnum]
+                    sql.addAward(memberID,award)
+                  }
+                }
+              })
+
+  
+
+
+            var groupids = ranks.groupid.concat(certs.groupid)
+            //blowout ts3's ranks and certs
+    
+        //push ranks and certs to ts3
+            for(const groupid of groupids)
+            {
+              await teamspeak.removeClientServerGroups(ts3id,groupid).catch((e)=>console.log(e))
+            }
+  
+            //add rank then add all certs
+            sql.getRank(memberID).then((currentrank)=>
+            {
+              var groupid = ranks.groupid[ranks.abbr.indexOf(currentrank)]
+              teamspeak.addClientServerGroups(ts3id,groupid).catch((e)=>console.log(e))
+            })
+            .then(()=>
+            {
+              sql.getCerts(memberID).then((currentcerts)=>
+              {
+                for(const cert of currentcerts)
+                {
+                  groupid = certs.groupid[certs.abbr.indexOf(cert.Cert)]
+                  teamspeak.addClientServerGroups(ts3id,groupid)
+                }
+              })
+            }) 
+          }
+          else{
+            console.log('Not Found')
+          }//end ts3id not found
+          
+
+
+
+        }//end ifmember
+      })//End Loop
+    }catch(e)
+    {
       console.error(e)
     }
-    var groupids = ranks.groupid.concat(certs.groupid)
-    teamspeak.removeClientFromServerGroups(ts3id,groupids)
 
-
-
-
-    //blowout ts3's ranks and certs
-    //pull awards from Ts3
-    //push ranks and certs to ts3
+    await message.reply(`Command finished.\n`)
   },
   permissions: '',
   description:'Updates the SQL DB with ranks, certs and awards',

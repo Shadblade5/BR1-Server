@@ -8,25 +8,24 @@ module.exports = {
   commands: ['test'],
   expectedArgs: '',
   permissionError: 'You need admin permissions to run this command',
-  minArgs: 0,
+  minArgs: 1,
   maxArgs: 1,
   callback: async(message, arguments, text) => {
     const { guild } = message
-
     var member
+    var targetUser
     var memberID
     var wrongargs=false;
     try{
       targetUser = message.mentions.users.first()
+      member = guild.members.cache.get(targetUser.id)
       memberID = targetUser.id
-      member = guild.members.cache.get(memberID)
       var wrongargs=false;
     }catch(e){
       //console.log(e);
       var wrongargs=true;
     }
-      if(wrongargs)
-      {
+      if(wrongargs){
         try{
           memberID = arguments[0]
           member = guild.members.cache.get(memberID)
@@ -42,7 +41,7 @@ module.exports = {
       return;
     }
     //---------------------------------------------------------------
-    console.log(memberID)
+
     var ts3id
     var servergroups
 
@@ -61,63 +60,29 @@ module.exports = {
     {
       console.error(e)
     }
-    //console.log(servergroups)
+
     var currentawards = ''
-    servergroups.forEach((groupid)=>{
-      
-      //console.log(groupid)
-      var ranknum = ranks.groupid.indexOf(groupid)
-      var certnum =  certs.groupid.indexOf(groupid)
-      var awardnum = awards.groupid.indexOf(groupid)
-      // console.log(`Rank ${ranknum}`)
-      // console.log(`Cert ${certnum}`)
-      // console.log(`Award ${awardnum}`)
-      if(ranknum>=0)
-      {
-        console.log(ranks.name[ranknum])
-      }
-      if(certnum>=0)
-      {
-        console.log(certs.name[certnum])
-      }
+    for (const servergroup of servergroups)
+    {
+      var awardnum = awards.groupid.indexOf(servergroup)
       if(awardnum>=0)
       {
-        sql.addAward(memberID,awards.abbr[awardnum])
-        currentawards += awards.name[awardnum] + ' '
+        var award = awards.abbr[awardnum]
+        await sql.addAward(memberID,award)
       }
-    })
+    }
     message.reply(currentawards)
-    ts3id = await sql.getTS3ID(memberID)
-    var groupids = ranks.groupid.concat(certs.groupid)
-    //console.log(groupids)
- 
-    for(const groupid of groupids)
-    {
-      await teamspeak.addClientServerGroups(ts3id,groupid).catch((e)=>console.log(e))
-    }
-    
 
-    for(const groupid of groupids)
-    {
-      await teamspeak.removeClientServerGroups(ts3id,groupid).catch((e)=>console.log(e))
-    }
+    var groupids = ranks.groupid.concat(certs.groupid)
+ 
+    //add all certs and ranks for testing purposes
+    // for(const groupid of groupids)
+    // {
+    //   await teamspeak.addClientServerGroups(ts3id,groupid).catch((e)=>console.log(e))
+    // }
     
-    sql.getRank(memberID).then((currentrank)=>
-    {
-      var groupid = ranks.groupid[ranks.abbr.indexOf(currentrank)]
-      teamspeak.addClientServerGroups(ts3id,groupid).catch((e)=>console.log(e))
-    })
-    .then(()=>
-    {
-      sql.getCerts(memberID).then((currentcerts)=>
-      {
-        for(const cert of currentcerts)
-        {
-          groupid = certs.groupid[certs.abbr.indexOf(cert.Cert)]
-          teamspeak.addClientServerGroups(ts3id,groupid)
-        }
-      })
-    })
+    //clear out all certs and ranks
+
   },
   permissions: '',
   description:'Is simply a test',
