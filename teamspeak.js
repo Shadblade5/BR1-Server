@@ -1,4 +1,5 @@
-const {TeamSpeak, QueryProtocol} = require("ts3-nodejs-library");
+const { DataResolver } = require("discord.js");
+const {TeamSpeak, QueryProtocol, ResponseError} = require("ts3-nodejs-library");
 const config = require('./config.json')
 const TS3PASS = config.TS3PASS
 const hostIP = config.TS3IP
@@ -12,9 +13,9 @@ const teamspeak = new TeamSpeak({
   queryport: qPort,
   serverport: sPort,
   protocol: QueryProtocol.RAW,
-  username: "BR1Teamspeak",
+  username: "BR1Bot",
   password: TS3PASS,
-  nickname: "ServerMonitor"
+  nickname: "BR1Bot"
 });
 
 teamspeak.on("ready", () => {
@@ -23,81 +24,56 @@ teamspeak.on("ready", () => {
 teamspeak.on("error", () => {
   console.log("Teamspeak failed to connect")
 })
-const shadid = 'Grd6QMFVyHf7pPFGsqazWFt8PK8='
+//const shadid = 'Grd6QMFVyHf7pPFGsqazWFt8PK8='
 
-function startTSconnection()
-{
 
-}
 
 const clientListFromSGID = async (sgid) => 
 {
   return teamspeak.serverGroupClientList(sgid);
 }
 
-async function addClientServerGroups(ts3uid,sgid)
+async function addClientServerGroup(dbid,sgid)
 {
  try{
-  await teamspeak.getClientByUid(ts3uid).then((client)=>client.addGroups(sgid))
+  teamspeak.clientAddServerGroup(dbid,sgid)
  }catch(e)
  {
-
    console.error(e)
    throw(e)
   }
 }
 
-async function removeClientServerGroups(ts3uid,sgid)
+async function removeClientServerGroup(dbid,sgid)
 {
- try{
-  await teamspeak.getClientByUid(ts3uid).then((client)=>client.delGroups(sgid))
- }catch(e)
- {
-   console.error(e)
-   throw(e)
- }
-}
+  try{
 
-async function getClientServerGroups(ts3uid)
-{
- try{
-  var servergroups 
-  if(ts3uid!='Not Found'|| ts3uid != ' '){
-  await teamspeak.getClientByUid(ts3uid).then((client)=>{
-    console.log(client)
-    try
-    {
-      servergroups = client.servergroups
-    }catch(e)
-    {
-      throw(e)
+     await teamspeak.clientDelServerGroup(dbid,sgid)
+
+   }catch(e)
+   {
+     console.error(e)
+     throw(e)
     }
-    console.log(servergroups)
-    return servergroups
-  })
-  }else
-  {
-    throw('Teamspeak ID not set')
-  }
- }catch(e)
- {
-   console.error(e)
-   throw(e)
- }
 }
 
-async function getclients()
+async function getservergroupclients(sgid)
 {
-  var clients
-  return clients = await teamspeak.clientDbList()
+  var cldbids = await teamspeak.serverGroupClientList(sgid) //returns array of client DB ids from a server group
+  return cldbids
+}
+async function getclientdbid(ts3uid)
+{
+  var dbid = await teamspeak.clientGetDbidFromUid(ts3uid)
+  console.log(dbid.cldbid)
+  return dbid.cldbid
 }
 
 
 module.exports = {
   teamspeak,
-  startTSconnection,
-  addClientServerGroups,
-  getClientServerGroups,
-  getclients,
-  removeClientServerGroups
+  addClientServerGroup,
+  removeClientServerGroup,
+  getservergroupclients,
+  getclientdbid
 };

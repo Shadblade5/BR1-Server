@@ -76,9 +76,9 @@ module.exports = {
     const numRank = ranks.abbr.indexOf(newrank)
     const authNumRank = ranks.abbr.indexOf(currentAuthorRankabbr);
 
-    if(numRank>authNumRank)
+    if(numRank>=authNumRank)
     {
-      message.reply(`You cannot rank up someone above your rank.`)
+      message.reply(`You cannot rank up someone at or above your rank.`)
       return
     }
 

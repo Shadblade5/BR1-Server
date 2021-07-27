@@ -79,7 +79,8 @@ module.exports = {
       message.reply(`${targetUser.tag} is already at the maximum rank of Captain`)
       return
     }
-    addClientToServerGroups(ts3uid,ranks.groupid[numRank])
+    await teamspeak.removeClientServerGroups(ts3uid,ranks.groupid[numRank])
+    teamspeak.addClientServerGroups(ts3uid,ranks.groupid[numRank+1])
     const newrankabbr = ranks.abbr[numRank+1]
     var newrank = ranks.name[numRank+1]
 

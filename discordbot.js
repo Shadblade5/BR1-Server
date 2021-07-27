@@ -49,7 +49,7 @@ function getStringDiff(a, b)
 
 client.on('ready', async () => {
   console.log('Discord client has started')
-  await sleep(5000)
+  await sleep(3000)
 
     try{
       await sql.connectToSQLServer()

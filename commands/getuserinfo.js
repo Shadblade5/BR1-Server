@@ -50,12 +50,12 @@ module.exports = {
       currentawards = await sql.getAwards(targetUser.id)
       currentcerts = await sql.getCerts(targetUser.id)
       for(var i=0;i<currentcerts.length;i++){
-        currentcerts[i] = ' '+ certs.name[certs.abbr.indexOf(currentcerts[i].Cert.toString())] + ' '
+        currentcerts[i] = certs.name[certs.abbr.indexOf(currentcerts[i].Cert.toString())] + ' '
       }
       for(var i=0;i<currentawards.length;i++){
         currentawards[i] = awards.name[awards.abbr.indexOf(currentawards[i].Award.toString())] + ' '
       }
-      message.reply(`Here is ${targetUser.tag} info:\nCurrent Rank:\n${currentRank}\nCurrent certs:\n${currentcerts}\nCurrent awards:\n${currentawards}`)
+      message.reply(`Here is ${targetUser.tag} info:\nCurrent Rank:\n${currentRank}\nCurrent certs:\n${currentcerts}\nCurrent awards:\n${currentawards}\n`)
 
     }catch(e){
       message.reply(`Failed to get ${targetUser.tag}'s info.\nError: ${e}`)

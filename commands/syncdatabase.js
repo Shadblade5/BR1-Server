@@ -24,21 +24,11 @@ module.exports =
     var members
     
     const unitmemberroleid = '728023335744831549'
-    var numadded = 0
-    var numranked = 0
-    var numcerted = 0
-    
-    
-    var hit = false
-    
-    var clients
-    var reply = ' '
-    
     var sqlids
+
     try
     {
       sqlids = await sql.getDiscordIDs()
-      clients = await teamspeak.getclients()
     }catch(e)
     {
       console.error(e)
@@ -53,14 +43,11 @@ module.exports =
         
         if (member.roles.cache.has(unitmemberroleid)) 
         {
-          var ts3id
           var memberID
           var discordtag
           var discordname
           var inDB = false;
           var rank = 'PVT'
-          var sqlmembercerts
-          var hascert = false;
           var cert = ' '
 
           memberID = member.user.id
@@ -77,9 +64,8 @@ module.exports =
             })
             if(!inDB)
             {
-              numadded=numadded+1
+              
               await sql.addUser(discordtag,memberID,teamspeakID=' ',rank)
-              reply += `${discordtag} was succefully added to the database\n`
             }
           }catch(e)
           {
@@ -95,9 +81,8 @@ module.exports =
               {
                 rank = ranks.abbr[j]
                 try{
-                  numranked=numranked+1
-                  await sql.updateRank(memberID,rank)
-                  reply += `${discordtag} was ranked up to ${rank}\n`                  
+                  
+                  await sql.updateRank(memberID,rank)             
                 }catch(e)
                 {
                 console.error(e)
@@ -139,77 +124,64 @@ module.exports =
           //   }
           //   if(diff==0)
           //   {
-          //     ts3id = client.clientUniqueIdentifier               
+          //     ts3uid = client.clientUniqueIdentifier               
           //   }
           // })
           // try
           // {
-          //   sql.updateTS3ID(memberID,ts3id)
+          //   sql.updateTS3ID(memberID,ts3uid)
           // }catch(e)
           // {
           //   console.error(e)
           // }
           //pull awards from Ts3
 
-          try
-          {
-            ts3id = await sql.getTS3ID(memberID)
-          }catch(e)
-          {
-            console.error(e)
-          }
-          if(ts3id != ' '|| ts3uid != 'Not Found')
-          {
-            await teamspeak.getClientServerGroups(ts3id).then((servergroups)=>
-              {
-                for (const servergroup of servergroups)
-                {
-                  var awardnum = awards.groupid.indexOf(servergroup)
-                  if(awardnum>=0)
-                  {
-                    var award = awards.abbr[awardnum]
-                    sql.addAward(memberID,award)
-                  }
-                }
-              })
-
-  
-
-
-            var groupids = ranks.groupid.concat(certs.groupid)
-            //blowout ts3's ranks and certs
-    
-        //push ranks and certs to ts3
-            for(const groupid of groupids)
-            {
-              await teamspeak.removeClientServerGroups(ts3id,groupid).catch((e)=>console.log(e))
-            }
-  
-            //add rank then add all certs
-            sql.getRank(memberID).then((currentrank)=>
-            {
-              var groupid = ranks.groupid[ranks.abbr.indexOf(currentrank)]
-              teamspeak.addClientServerGroups(ts3id,groupid).catch((e)=>console.log(e))
-            })
-            .then(()=>
-            {
-              sql.getCerts(memberID).then((currentcerts)=>
-              {
-                for(const cert of currentcerts)
-                {
-                  groupid = certs.groupid[certs.abbr.indexOf(cert.Cert)]
-                  teamspeak.addClientServerGroups(ts3id,groupid)
-                }
-              })
-            }) 
-          }
-          else{
-            console.log('Not Found')
-          }//end ts3id not found
-          
+          // var groupids = ranks.groupid.concat(certs.groupid)
+          //   sql.getTS3ID(memberID).then(async(ts3uid)=>
+          //   {
+          //     if(ts3uid != ' '|| ts3uid != 'Not Found')
+          //     {
+          //       teamspeak.getClientServerGroups(ts3uid).then((servergroups)=>
+          //       {
+          //         for (const servergroup of servergroups)
+          //         {
+          //           var awardnum = awards.groupid.indexOf(servergroup)
+          //           if(awardnum>=0)
+          //           {
+          //             var award = awards.abbr[awardnum]
+          //             sql.addAward(memberID,award)
+          //           }
+          //         }
+          //       })
+          //     }else
+          //     {
+          //       console.log("TS3 User ID was not found")
+          //     }
+          //     //blowout ts3's ranks and certs
+          //     for(const groupid of groupids)
+          //     {
+          //       await teamspeak.removeClientServerGroups(ts3uid,groupid).catch((e)=>console.log(e))
+          //     }
+          //     //push ranks and certs to ts3
+          //     sql.getRank(memberID).then((currentrank)=>
+          //     {
+          //       var groupid = ranks.groupid[ranks.abbr.indexOf(currentrank)]
+          //       teamspeak.addClientServerGroups(ts3uid,groupid).catch((e)=>console.log(e))
+          //     })
+          //     .then(()=>
+          //     {
+          //       sql.getCerts(memberID).then((currentcerts)=>
+          //       {
+          //         for(const cert of currentcerts)
+          //         {
+          //           groupid = certs.groupid[certs.abbr.indexOf(cert.Cert)]
+          //           teamspeak.addClientServerGroups(ts3uid,groupid)
+          //         }
+          //       })
+          //     }) 
 
 
-
+            // })
         }//end ifmember
       })//End Loop
     }catch(e)

@@ -1,4 +1,5 @@
 const sql = require('../sqlfunctions')
+const ts3 = require('../teamspeak')
 module.exports = {
   commands: ['updateTS3ID'],
   expectedArgs: '<@user/ID> <TeamspeakID>',
@@ -39,20 +40,21 @@ module.exports = {
     }
 
     var teamspeakID
-
+    var dbID
     arguments.shift()
     teamspeakID = arguments[0];
 
     try{
         await sql.updateTS3ID(memberID,teamspeakID)
-        message.reply(`${discordName} was successfully updated with a TS3ID`)
+        message.reply(`${targetUser.tag} was successfully updated with a TS3ID`)
+        dbID = await ts3.getclientdbid(teamspeakID)
+        await sql.updateDBID(memberID,dbID)
     }catch(e){
         console.log(e)
         message.reply(e)
     }
   },
   permissions: '',
-  description:"Updates a user's TS3ID",
-
+  description:"Updates a user's TS3ID & DatabaseID",
   requiredRoles: ['Officer','Admin-NCO','Senior-NCO','NCO'],
 }
