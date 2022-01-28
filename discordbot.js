@@ -12,9 +12,9 @@ function sleep(ms) {
   });
 }
 
-function getStringDiff(a, b) 
+function getStringDiff(a, b)
 {
-  if (a.length === 0) return b.length; 
+  if (a.length === 0) return b.length;
   if (b.length === 0) return a.length;
 
   var matrix = [];
@@ -46,6 +46,12 @@ function getStringDiff(a, b)
 
   return matrix[b.length][a.length];
 };
+
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
 
 client.on('ready', async () => {
   console.log('Discord client has started')

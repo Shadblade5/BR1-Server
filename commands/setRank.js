@@ -97,7 +97,7 @@ module.exports = {
 
     if((0>ranks.abbr.indexOf(newrank))||(0>ranks.name.indexOf(newrank)))
     {
-      
+
       if(ranks.abbr.indexOf(newrank)>-1)
       {
         newnumRank = ranks.abbr.indexOf(newrank)
@@ -127,7 +127,7 @@ module.exports = {
     var OFF = guild.roles.cache.find((role) => {
       return role.name === "Officer"
     });
-    
+
     try
     {
       await sql.updateRank(memberID,newrankabbr)
@@ -183,7 +183,7 @@ module.exports = {
     {
       console.log(e);
     }
-     
+
   },
   permissions: '',
   description:'Gives a user a specific rank',

@@ -117,6 +117,11 @@ module.exports = (client, commandOptions) => {
           return
         }
 
+        if(!hasRole)
+        {
+          message.reply(`You must have the "${requiredRole}" role to use this command.`)
+          return
+        }
         // Split on any number of spaces
         const arguments = content.split(/[ ]+/)
 

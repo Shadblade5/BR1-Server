@@ -74,16 +74,16 @@ module.exports = {
       message.reply(`You cannot rank up someone above your rank.`)
       return
     }
-    
+
     const maxrank = 13;
     if(numRank == maxrank){
       message.reply(`${targetUser.tag} cannot be ranked up further`)
       return
     }
-    
+
     //await teamspeak.removeClientServerGroups(ts3uid,ranks.groupid[numRank])
     //teamspeak.addClientServerGroups(ts3uid,ranks.groupid[numRank+1])
-    
+
     const newrankabbr = ranks.abbr[numRank+1]
     var newrank = ranks.name[numRank+1]
 

@@ -58,7 +58,7 @@ async function addUser(discordName,DiscordID,TeamspeakID='',rank,DBID=-1){
       console.log(e)
       throw('User already exists in the database.');
     }
-  
+
 }
 
 async function removeUser(discordName,DiscordID){
