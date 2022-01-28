@@ -5,7 +5,7 @@
  *  this file then expect the file to be slightly different than in the video.
  */
 
-const { prefix } = require('../config.json')
+const { prefix } = require('../../../config.json')
 
 const validatePermissions = (permissions) => {
   const validPermissions = [
