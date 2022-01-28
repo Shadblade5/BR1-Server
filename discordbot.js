@@ -1,7 +1,7 @@
 require('events').EventEmitter.defaultMaxListeners = 30;
 const Discord = require('discord.js')
 const client = new Discord.Client()
-const config = require('./config.json')
+const config = require('..//../config.json')
 const sql = require('./sqlfunctions')
 const loadCommands = require('./commands/load-commands');
 
