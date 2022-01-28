@@ -4,7 +4,15 @@ const client = new Discord.Client()
 const config = require('..//../config.json')
 const sql = require('./sqlfunctions')
 const loadCommands = require('./commands/load-commands');
+const fs = require('fs');
 
+fs.readFile("../../restartbot.txt",(err,data)=>{
+  if(err) throw err;
+  if(data)
+  {
+    process.exit(1);
+  }
+})
 
 function sleep(ms) {
   return new Promise((resolve) => {
@@ -71,7 +79,6 @@ client.on('ready', async () => {
     loadCommands(client);
     console.log('Ready!')
 })
-
 
 client.login(config.token);
 
