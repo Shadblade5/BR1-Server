@@ -7,8 +7,7 @@ const loadCommands = require('./commands/load-commands');
 const fs = require('fs');
 
 fs.readFile("../../restartbot.txt",(err,data)=>{
-  if(err) throw err;
-  if(data)
+  if(!err)
   {
     process.exit(1);
   }
