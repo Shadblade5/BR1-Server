@@ -62,6 +62,7 @@ async function getservergroupclients(sgid)
   var cldbids = await teamspeak.serverGroupClientList(sgid) //returns array of client DB ids from a server group
   return cldbids
 }
+
 async function getclientdbid(ts3uid)
 {
   var dbid = await teamspeak.clientGetDbidFromUid(ts3uid)

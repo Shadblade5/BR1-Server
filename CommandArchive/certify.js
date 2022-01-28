@@ -9,10 +9,11 @@ module.exports = {
   callback: async(message, arguments, text) => {
 
     const { guild } = message
-    var member
-    var targetUser
-    var memberID
+    var member;
+    var targetUser;
+    var memberID;
     var wrongargs=false;
+    var role;
     try{
       targetUser = message.mentions.users.first()
       member = guild.members.cache.get(targetUser.id)
@@ -40,32 +41,38 @@ module.exports = {
 
 
     arguments.shift()
-    var certName = arguments[0].capitalize()
+    var certName = arguments[0]
     var numCert = certs.name.indexOf(certName)
     var certabbr
 
     if(numCert<0){
-      message.reply(`Invalid Certification. Here is a list of valid Certifications: \n${certnames}`)
+      message.reply(`Invalid Certification. Here is a list of valid Certifications: \n${certs.names}`)
       return;
     }else{
       var currentCerts = []
       var currentCertnum
-      try{
-          certabbr = await sql.getCerts(memberID)
-          certabbr.forEach((element,i) => {
-          currentCerts[i] = element.Cert.toString();});
-          currentCertnum = currentCerts.indexOf(abbr)
-      }catch(e){
-        message.reply(e)
-        console.log(e)
-      }
+      // try{
+      //     certabbr = await sql.getCerts(memberID)
+      //     certabbr.forEach((element,i) => {
+      //     currentCerts[i] = element.Cert.toString();});
+      //     currentCertnum = currentCerts.indexOf(abbr)
+      // }catch(e){
+      //   message.reply(e)
+      //   console.log(e)
+      // }
       if(0<=currentCertnum){
         message.reply(`${targetUser.tag} already has the ${certName} Certification.`)
         return;
       }else{
         try{
-          await sql.addCert(memberID,certabbr)
-          message.reply(`${targetUser.tag} has been certified for ${certabbr}.`)
+          //await sql.addCert(memberID,certabbr)
+          message.reply(`${targetUser.tag} has been certified for ${certName}.`)
+          role = guild.roles.cache.find((role) => {
+            message.reply(numCert +" " + certs.discordid[numCert]);
+            return role.id === certs.discordid[numCert];
+          });
+          message.reply(role);
+          member.roles.add(role);
         }catch(e){
           console.log(e)
           message.reply(e)

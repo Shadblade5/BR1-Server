@@ -57,7 +57,7 @@ module.exports = (client, commandOptions) => {
     minArgs = 0,
     maxArgs = null,
     permissions = [],
-    requiredRoles = [],
+    requiredRoles = ['Unit Member'],
     callback,
   } = commandOptions
 
@@ -100,16 +100,15 @@ module.exports = (client, commandOptions) => {
 
         // Ensure the user has the required roles
 
-        var hasRole = true;
+        var hasRole = false;
 
         for (const requiredRole of requiredRoles) {
           const role = guild.roles.cache.find(
             (role) => role.name === requiredRole
           )
-
-
-          if (!member.roles.cache.has(role.id)) {
-            hasRole = false;
+          if (member.roles.cache.has(role.id)) {
+            hasRole = true;
+            break;
           }
         }
         if(!hasRole)

@@ -1,6 +1,6 @@
 const sql = require('../sqlfunctions')
 module.exports = {
-  commands: ['removeuser'],
+  commands: ['removemember'],
 
   expectedArgs: '<@user/ID>',
 
@@ -39,11 +39,12 @@ module.exports = {
       message.reply('Please specify someone to run the command on')
       return;
     }
+    //
 
-    const username = arguments[0]
     const discordName = targetUser.tag
     const discordID = targetUser.id
     try{
+      
     await sql.removeUser(discordName,discordID)
     message.reply(`${discordName} was successfully removed from the database`)
     }catch(e){
@@ -51,7 +52,7 @@ module.exports = {
     }
   },
   permissions: '',
-  description:'Removes a existing member from the BR1 Database.',
+  description:'Removes a existing member from the Unit.',
 
   requiredRoles: ['Officer'],
 }
