@@ -5,7 +5,7 @@ const ranks = require('../info/ranks.json')
 module.exports = {
   commands: ['getuserinfo'],
   expectedArgs: '<@user/ID>',
-  permissionError: 'You need admin permissions to run this command',
+  permissionError: '',
   minArgs: 1,
   maxArgs: 1,
   callback: async(message, arguments, text) => {
@@ -61,7 +61,8 @@ module.exports = {
       message.reply(`Failed to get ${targetUser.tag}'s info.\nError: ${e}`)
       console.log(e);
     }
-        var ts3
+    
+    var ts3
     var servergroups
 
     try
@@ -79,7 +80,6 @@ module.exports = {
     {
       console.error(e)
     }
-    //console.log(servergroups)
     
 
   },
