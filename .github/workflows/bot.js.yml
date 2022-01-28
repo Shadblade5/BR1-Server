@@ -27,5 +27,5 @@ jobs:
         cache: 'npm'
     - run: npm install
     - run: npm run build --if-present
-    - run: cmd /K C:\\actions-runner\\restartbot.bat
+    - run: cmd /C C:\\actions-runner\\restartbot.bat
 
