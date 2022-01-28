@@ -2,7 +2,7 @@ require('dotenv').config();
 const SQLPASS = process.env.SQLPASS
 const { makeDb } = require('mysql-async-simple');
 const mysql = require('mysql');
-const config = require('./config.json')
+const config = require('../../config.json')
 
 let connection = mysql.createConnection({
     host: config.IP,
