@@ -11,8 +11,7 @@ module.exports = {
     const { guild } = message
     var member
     var targetUser
-
-    var memberID
+    var memberID;
     var wrongargs=false;
     try
     {
@@ -22,64 +21,64 @@ module.exports = {
       var wrongargs=false;
     }catch(e)
     {
-      //console.log(e);
       var wrongargs=true;
     }
-      if(wrongargs)
+    if(wrongargs)
+    {
+      try
       {
-        try
-        {
-          memberID = arguments[0]
-          member = guild.members.cache.get(memberID)
-          targetUser = member.user
-          var wrongargs=false;
-        }catch(e)
-        {
-          //console.log(e);
-          var wrongargs=true;
-        }
+        memberID = arguments[0]
+        member = guild.members.cache.get(memberID)
+        targetUser = member.user
+        var wrongargs=false;
+      }catch(e)
+      {
+        //console.log(e);
+        var wrongargs=true;
       }
+    }
     if(wrongargs)
     {
       message.reply('Please specify someone to run the command on')
       return;
     }
-
+    //TESTING
+    memberID = 742529349697142845;
+    member = guild.members.cache.get(memberID);
+    targetUser = member.user;
+    //TESTING
     arguments.shift()
     arguments[0] = arguments[0].toUpperCase()
     var newrank = arguments[0]
 
-    var role
-    var oldrole
-    var currentAuthorRankabbr
-    var currentRankabbr = ' '
-    var currentRank
-
-    var autherUser = guild.members.cache.get(message.author.id)
-    if(memberID == autherUser.id && memberID != 208119044308467712)
+    var currentAuthorRankabbr;
+    var currentRankabbr = ' ';
+    var currentRank;
+    var newnumRank;
+    var authorUser = guild.members.cache.get(message.author.id)
+    if(memberID == authorUser.id && memberID != 208119044308467712)
     {
       message.reply(`You cannot rank yourself up.`)
-      return
+      return;
     }
 
     try
     {
-    currentRankabbr = await sql.getRank(memberID)
-    currentAuthorRankabbr = await sql.getRank(autherUser.id)
+      currentRankabbr = await sql.getRank(memberID)
+      currentAuthorRankabbr = await sql.getRank(authorUser.id)
     }catch(e)
     {
       message.reply(`User does not exist in the database`)
     }
-
     currentRank = ranks.name[ranks.abbr.indexOf(currentRankabbr)]
 
     const numRank = ranks.abbr.indexOf(newrank)
     const authNumRank = ranks.abbr.indexOf(currentAuthorRankabbr);
 
-    if(numRank>authNumRank)
+    if(numRank>=authNumRank)
     {
-      message.reply(`You cannot rank up someone above your rank.`)
-      return
+      message.reply(`You cannot rank up someone at or above your rank.`)
+      return;
     }
 
     if(numRank<0)
@@ -96,12 +95,13 @@ module.exports = {
       return;
     }
 
-    if(0>ranks.abbr.indexOf(arguments[0])||0>ranks.name.indexOf(arguments[0]))
+    if((0>ranks.abbr.indexOf(newrank))||(0>ranks.name.indexOf(newrank)))
     {
 
-      if(ranks.abbr.indexOf(arguments[0])>0)
+      if(ranks.abbr.indexOf(newrank)>-1)
       {
-        newrank = ranks.name[ranks.abbr.indexOf(arguments[0])]
+        newnumRank = ranks.abbr.indexOf(newrank)
+        newrank = ranks.name[newnumRank]
       }
 
     }else
@@ -109,19 +109,81 @@ module.exports = {
       message.reply(`${arguments[0]} is not a valid rank`)
       return;
     }
+    var Nrank = guild.roles.cache.find((role) => {
+      return role.name === newrank
+    });
+    var Orank = guild.roles.cache.find((role) => {
+      return role.name === currentRank
+    });
+    var NCO = guild.roles.cache.find((role) => {
+      return role.name === 'NCO'
+    });
+    var SNCO = guild.roles.cache.find((role) => {
+      return role.name === "Senior-NCO"
+    });
+    var ANCO = guild.roles.cache.find((role) => {
+      return role.name === "Admin-NCO"
+    });
+    var OFF = guild.roles.cache.find((role) => {
+      return role.name === "Officer"
+    });
 
-      role = guild.roles.cache.find((role) => {
-        return role.name === newrank
-      });
-      oldrole = guild.roles.cache.find((role) => {
-        return role.name === currentRank
-      });
-
-      member.roles.add(role);
-      member.roles.remove(oldrole);
-
+    try
+    {
+      await sql.updateRank(memberID,newrankabbr)
+      console.log(newnumRank)
+      member.roles.add(Nrank)
+      member.roles.remove(Orank)
+      if((newnumRank)<8)
+      {
+        member.roles.remove(OFF);
+        member.roles.remove(ANCO);
+        member.roles.remove(NCO);
+        member.roles.remove(SNCO);
+      }
+      if((newnumRank)>8&&(newnumRank)<11)
+      {
+        member.roles.add(NCO);
+        member.roles.remove(SNCO);
+        member.roles.remove(ANCO);
+        member.roles.remove(OFF);
+      }
+      if((newnumRank>=11)&&(newnumRank<=13))
+      {
+        member.roles.add(SNCO);
+        member.roles.remove(NCO);
+        member.roles.remove(ANCO);
+        member.roles.remove(OFF);
+      }
+      if((newnumRank>13&&newnumRank<16))
+      {
+        member.roles.add(ANCO);
+        member.roles.remove(NCO);
+        member.roles.remove(SNCO);
+        member.roles.remove(OFF);
+      }
+      if((newnumRank>13&&newnumRank<16))
+      {
+        member.roles.add(ANCO);
+        member.roles.remove(NCO);
+        member.roles.remove(SNCO);
+        member.roles.remove(OFF);
+      }
+      if(newnumRank>=16&&newnumRank<18)
+      {
+        member.roles.add(OFF);
+        member.roles.remove(ANCO);
+        member.roles.remove(NCO);
+        member.roles.remove(SNCO);
+      }
     await sql.updateRank(memberID,newrankabbr)
     message.reply(`${targetUser.tag} now has the rank ${newrank}`)
+    }
+    catch(e)
+    {
+      console.log(e);
+    }
+
   },
   permissions: '',
   description:'Gives a user a specific rank',
