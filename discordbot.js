@@ -20,6 +20,7 @@ async function restart() {
   }
 }
 restart();
+//test
 function getStringDiff(a, b)
 {
   if (a.length === 0) return b.length;
