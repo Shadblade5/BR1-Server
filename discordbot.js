@@ -1,11 +1,11 @@
 require('events').EventEmitter.defaultMaxListeners = 30;
 const Discord = require('discord.js')
 const client = new Discord.Client()
-const config = require('..//../config.json')
+const config = require('../../config.json')
 const sql = require('./sqlfunctions')
 const loadCommands = require('./commands/load-commands');
 const fs = require('fs');
-const restart = require('..//../restartflag.json')
+const restart = require('../../../restartflag.json')
 
 console.log("Restart Flag: "+restart.flag)
 if(restart.flag = true)
@@ -13,7 +13,6 @@ if(restart.flag = true)
   restart.flag = false;
   process.exit(1);
 }
-
 
 function sleep(ms) {
   return new Promise((resolve) => {
