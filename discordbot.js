@@ -6,7 +6,7 @@ const sql = require('./sqlfunctions')
 const loadCommands = require('./commands/load-commands');
 const fs = require('fs');
 
-fs.readFile("../../../restartflag.txt",(err,data)=>{
+fs.readFile("C:\actions-runner\restartflag.txt",(err,data)=>{
   if(!err)
   {
     process.exit(1);
