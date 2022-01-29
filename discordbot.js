@@ -8,6 +8,7 @@ const fs = require('fs');
 
 async()=>{
   while(true){
+    console.log("Reading Restart file")
     fs.readFile('C:/actions-runner/restartflag.json',(err,data) =>{
       var restart = JSON.parse(data);
       console.log("Restart Flag: "+restart.flag)
