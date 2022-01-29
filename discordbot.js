@@ -5,15 +5,18 @@ const config = require('..//../config.json')
 const sql = require('./sqlfunctions')
 const loadCommands = require('./commands/load-commands');
 const fs = require('fs');
-/*
-fs.readFile("../../restartbot.txt",(err,data)=>{
+
+fs.readFile("../../restartflag.txt",(err,data)=>{
   if(!err)
   {
     process.exit(1);
   }
-  console.log(data);
+  else
+  {
+    console.log("file does not exist")
+  }
 })
-*/
+
 
 function sleep(ms) {
   return new Promise((resolve) => {
