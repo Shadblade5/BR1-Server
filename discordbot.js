@@ -6,7 +6,7 @@ const sql = require('./sqlfunctions')
 const loadCommands = require('./commands/load-commands');
 const fs = require('fs');
 
-fs.readFile('../../../restartflag.json',(err,data) =>{
+fs.readFile('C:/actions-runner/restartflag.json',(err,data) =>{
   var restart = JSON.parse(data);
   console.log("Restart Flag: "+restart.flag)
   if(restart.flag)
