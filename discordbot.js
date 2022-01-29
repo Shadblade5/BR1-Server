@@ -5,17 +5,13 @@ const config = require('..//../config.json')
 const sql = require('./sqlfunctions')
 const loadCommands = require('./commands/load-commands');
 const fs = require('fs');
+const restart = require('..//../restartflag.json')
 
-fs.readFile("C:\actions-runner\restartflag.txt",(err,data)=>{
-  if(!err)
-  {
-    process.exit(1);
-  }
-  else
-  {
-    console.log("file does not exist")
-  }
-})
+console.log("Restart Flag: "+restart.flag)
+if(restart.flag = true)
+{
+  process.exit(1);
+}
 
 
 function sleep(ms) {
