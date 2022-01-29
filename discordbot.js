@@ -6,20 +6,21 @@ const sql = require('./sqlfunctions')
 const loadCommands = require('./commands/load-commands');
 const fs = require('fs');
 
-async()=>{
-  while(true){
-    console.log("Reading Restart file")
-    fs.readFile('C:/actions-runner/restartflag.json',(err,data) =>{
+async function restart() {
+  while (true) {
+    console.log("Reading Restart file");
+    fs.readFile('C:/actions-runner/restartflag.json', (err, data) => {
       var restart = JSON.parse(data);
-      console.log("Restart Flag: "+restart.flag)
-      if(restart.flag)
-      {
+      console.log("Restart Flag: " + restart.flag);
+      if (restart.flag) {
         process.exit(1);
       }
-    })
-  sleep(30000)
+    });
+    sleep(3000);
   }
 }
+
+restart();
 
 function getStringDiff(a, b)
 {
