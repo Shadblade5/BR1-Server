@@ -5,7 +5,6 @@ const config = require('../../config.json')
 const sql = require('./sqlfunctions')
 const loadCommands = require('./commands/load-commands');
 const fs = require('fs');
-const restart = require('../../../restartflag.json')
 
 fs.readFile('../../../restartflag.json',(err,data) =>{
   var restart = JSON.parse(data);
