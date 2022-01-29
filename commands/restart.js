@@ -1,9 +1,3 @@
-const sql = require('../sqlfunctions')
-const awards = require('../info/awards.json')
-const ranks = require('../info/ranks.json')
-const certs = require('../info/certs.json')
-const ts3 = require('../teamspeak')
-const functions = require('../discordbot')
 module.exports = {
   commands: ['restart'],
   expectedArgs: '',
