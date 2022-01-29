@@ -5,7 +5,7 @@ const config = require('..//../config.json')
 const sql = require('./sqlfunctions')
 const loadCommands = require('./commands/load-commands');
 const fs = require('fs');
-
+/*
 fs.readFile("../../restartbot.txt",(err,data)=>{
   if(!err)
   {
@@ -13,7 +13,15 @@ fs.readFile("../../restartbot.txt",(err,data)=>{
   }
   console.log(data);
 })
-//Test
+*/
+
+if (message.content === '$restart') {
+  if (message.author.id == 208119044308467712) return;
+  message.channel.send('Restarted.').then(() => {
+  process.exit(1);
+})
+};
+
 function sleep(ms) {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
