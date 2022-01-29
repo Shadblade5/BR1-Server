@@ -11,6 +11,7 @@ fs.readFile("../../restartbot.txt",(err,data)=>{
   {
     process.exit(1);
   }
+  console.log(data);
 })
 //Test
 function sleep(ms) {
