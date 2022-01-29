@@ -15,11 +15,8 @@ fs.readFile("../../restartbot.txt",(err,data)=>{
 })
 */
 
-if (message.content === '$restart') {
-  if (message.author.id == 208119044308467712) return;
-  message.channel.send('Restarted.').then(() => {
-  process.exit(1);
-})
+
+
 };
 
 function sleep(ms) {
