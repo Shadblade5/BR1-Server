@@ -16,12 +16,10 @@ async function restart() {
         process.exit(1);
       }
     });
-    sleep(3000);
+    await sleep(30000);
   }
 }
-
 restart();
-
 function getStringDiff(a, b)
 {
   if (a.length === 0) return b.length;
