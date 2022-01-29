@@ -7,11 +7,14 @@ const loadCommands = require('./commands/load-commands');
 const fs = require('fs');
 const restart = require('../../../restartflag.json')
 
-console.log("Restart Flag: "+restart.flag)
-if(restart.flag = true)
-{
-  process.exit(1);
-}
+fs.readFile('../../../restartflag.json',(err,data) =>{
+  var restart = JSON.parse(data);
+  console.log("Restart Flag: "+restart.flag)
+  if(restart.flag)
+  {
+    process.exit(1);
+  }
+})
 
 function sleep(ms) {
   return new Promise((resolve) => {
