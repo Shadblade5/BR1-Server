@@ -10,7 +10,6 @@ const restart = require('../../../restartflag.json')
 console.log("Restart Flag: "+restart.flag)
 if(restart.flag = true)
 {
-  restart.flag = false;
   process.exit(1);
 }
 
