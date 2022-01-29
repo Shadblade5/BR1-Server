@@ -8,7 +8,7 @@ const fs = require('fs');
 
 while(true)
 {
-  fs.readFile('C:/actions-runner/restartflag.json',(err,data) =>{
+  async()=>{fs.readFile('C:/actions-runner/restartflag.json',(err,data) =>{
     var restart = JSON.parse(data);
     console.log("Restart Flag: "+restart.flag)
     if(restart.flag)
@@ -17,6 +17,7 @@ while(true)
     }
   })
   sleep(30000);
+  }
 }
 
 function sleep(ms) {
