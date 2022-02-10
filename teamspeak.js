@@ -1,6 +1,6 @@
 const { DataResolver } = require("discord.js");
 const {TeamSpeak, QueryProtocol, ResponseError} = require("ts3-nodejs-library");
-const config = require('../../config.json')
+const config = require('./config.json')
 const TS3PASS = config.TS3PASS
 const hostIP = config.TS3IP
 
