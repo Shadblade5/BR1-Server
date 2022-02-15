@@ -1,6 +1,6 @@
 const bot = require('../discordbot.js')
 module.exports = {
-  commands: ['reloadCommands'],
+  commands: ['reloadcommands'],
   expectedArgs: '',
   permissionError: 'You need admin permissions to run this command',
   minArgs: 0,

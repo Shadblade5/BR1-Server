@@ -13,18 +13,35 @@ module.exports = {
   maxArgs: 1,
   callback: async(message, arguments, text) => {
     var discordid = message.author.id;
-    console.log(discordid);
-    var uid = await sql.getTS3ID(discordid);
-    console.log(uid);
-    var dbid = await ts3.getclientdbid(uid);
-    await sql.updateDBID(discordid,dbid);
+    // const { guild } = message
+    // var discordname;
+    // var guildmember = guild.members.fetch('208119044308467712')
+    // if(guildmember.nickname ==null)
+    // {
+    //   discordname = message.author.username;
+    // }
+    // else
+    // {
+    //   discordname = guildmember.nickname;
+    // }
+    // console.log(guildmember);
+    // console.log(discordname);
+    // console.log(discordid);
+    // var uid = await sql.getTS3ID(discordid);
+    // console.log(uid);
+    // var dbid = await ts3.getclientdbid(uid);
+    // await sql.updateDBID(discordid,dbid);
     
     //ts3.addClientServerGroup(dbid,9)
     //ts3.removeClientServerGroup(dbid,9)
 
 
+
+const nicknames = await Promise.all(promises);
+message.reply(nicknames);
+
   },
   permissions: '',
   description:'Is simply a test',
-  requiredRoles: ['Officer'],
+  requiredRoles: ['Officer','Admin-NCO'],
 }

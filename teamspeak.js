@@ -43,6 +43,14 @@ async function addClientServerGroup(dbid,sgid)
    throw(e)
   }
 }
+async function getLobbyClients()
+{
+  var channel;
+  var clients;
+  channel = await teamspeak.getChannelByName("Lobby");
+  clients = await channel.getClients();
+ return clients;
+}
 
 async function removeClientServerGroup(dbid,sgid)
 {
@@ -76,5 +84,6 @@ module.exports = {
   addClientServerGroup,
   removeClientServerGroup,
   getservergroupclients,
-  getclientdbid
+  getclientdbid,
+  getLobbyClients
 };

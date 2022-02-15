@@ -33,17 +33,17 @@ async function connectToSQLServer(){
   }
 }
 
-async function getTS3ID(DiscordID){
-    const qts3 = 'SELECT TeamspeakID FROM master WHERE DiscordID = '+connection.escape(DiscordID);
+async function getdbid(DiscordID){
+    const qts3 = 'SELECT DBID FROM master WHERE DiscordID = '+connection.escape(DiscordID);
     try{
       var result = await query(qts3);
     }catch(e)
     {
       console.log(e)
       result = 'None'
-      throw('Failed to query Rank')
+      throw('Failed to query DBID')
     }
-    return result[0].TeamspeakID;
+    return result[0].DBID;
   }
 
 async function addUser(discordName,DiscordID,TeamspeakID='',rank,DBID=-1){
@@ -128,7 +128,7 @@ async function updateDBID(DiscordID,DBID){
   }catch(e){
     console.log(e)
     result = 'None'
-    throw("Failed to update TeamspeakID")
+    throw("Failed to update DBID")
   }
   return result;
 }
@@ -252,11 +252,10 @@ module.exports = {
   removeAward,
   addUser,
   removeUser,
-  getTS3ID,
   getDiscordIDs,
   updateTS3ID,
   fillrole,
   updateDBID,
-  querydb
-
+  querydb,
+  getdbid
 };

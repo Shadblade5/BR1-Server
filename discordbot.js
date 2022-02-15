@@ -79,6 +79,10 @@ client.on('ready', async () => {
     loadCommands(client);
     console.log('Ready!')
 })
+// function reloadCommands()
+// {
+//   loadCommands(client);
+// }
 
 client.login(config.token);
 
@@ -88,5 +92,5 @@ client.login(config.token);
 
   module.exports = {
   getStringDiff,
-  sleep
+  sleep,
   }
