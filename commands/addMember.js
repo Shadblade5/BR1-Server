@@ -8,8 +8,6 @@ module.exports = {
   callback: async(message, arguments, text) => {
 
     const { guild } = message
-    var unitmemberid = '728023335744831549'
-    var onthefenceid = '661748761952780304'
     var member
     var targetUser
     var memberID

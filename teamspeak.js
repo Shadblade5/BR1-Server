@@ -13,9 +13,9 @@ const teamspeak = new TeamSpeak({
   queryport: qPort,
   serverport: sPort,
   protocol: QueryProtocol.RAW,
-  username: "BR1Bot",
+  username: "BR1BotDev",
   password: TS3PASS,
-  nickname: "BR1Bot"
+  nickname: "BR1BotDev"
 });
 
 teamspeak.on("ready", () => {
@@ -38,7 +38,7 @@ async function addClientServerGroup(dbid,sgid)
  try{
   teamspeak.clientAddServerGroup(dbid,sgid)
  }catch(e)
- {
+  {
    console.error(e)
    throw(e)
   }
@@ -51,7 +51,7 @@ async function removeClientServerGroup(dbid,sgid)
      await teamspeak.clientDelServerGroup(dbid,sgid)
 
    }catch(e)
-   {
+    {
      console.error(e)
      throw(e)
     }
@@ -59,7 +59,7 @@ async function removeClientServerGroup(dbid,sgid)
 
 async function getservergroupclients(sgid)
 {
-  var cldbids = await teamspeak.serverGroupClientList(sgid) //returns array of client DB ids from a server group
+  var cldbids = await teamspeak.serverGroupClientList(sgid) 
   return cldbids
 }
 

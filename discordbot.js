@@ -18,7 +18,7 @@ async function restart() {
     await sleep(30000);
   }
 }
-restart();
+//restart();
 //test
 function getStringDiff(a, b)
 {
