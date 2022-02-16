@@ -1,10 +1,10 @@
 const sql = require('../sqlfunctions')
 module.exports = {
   commands: ['addmember'],
-  expectedArgs: '<@user/ID> <TeamspeakID>',
+  expectedArgs: '<@user/ID>',
   permissionError: '',
   minArgs: 1,
-  maxArgs: 2,
+  maxArgs: 1,
   callback: async(message, arguments, text) => {
 
     const { guild } = message
@@ -13,39 +13,51 @@ module.exports = {
     var memberID
     var wrongargs=false;
     var rank
-    var teamspeakID
     var sqlids
-
-    arguments.shift()
-    teamspeakID = arguments[0];
     rank = 'PVT';
 
-    try{
-      targetUser = message.mentions.users.first()
-      member = guild.members.cache.get(targetUser.id)
-      memberID = targetUser.id
-      var wrongargs=false;
+    // try{
+    //   targetUser = message.mentions.users.first()
+    //   member = guild.members.cache.get(targetUser.id)
+    //   memberID = targetUser.id 
+    // }catch(e){
+    //   //console.log(e);
+    //   wrongargs=true;
+    // }
+    // if(wrongargs)
+    // {
+    //   try{
+    //     memberID = arguments[0];
+    //     member = guild.members.cache.get(memberID)
+    //     targetUser = member.user
+    //   }catch(e){
+    //     //console.log(e);
+    //     var wrongargs=true;
+    //   }
+    // }
+    // if(wrongargs){
+    //   message.reply('Please specify someone to run the command on')
+    //   return;
+    // }
+    
+        var promise = new Promise(async (resolve) => {
+          const member = message.mentions.users.first() || await guild.members.cache.get(arguments[0])
+            resolve(member || member.user);
+        });
 
-    }catch(e){
-      //console.log(e);
-      var wrongargs=true;
-    }
-    if(wrongargs){
-      try{
-        memberID = arguments[0]
-        member = guild.members.cache.get(memberID)
-        targetUser = member.user
-        var wrongargs=false;
-      }catch(e){
-        //console.log(e);
-        var wrongargs=true;
-      }
-    }
-    if(wrongargs){
-      message.reply('Please specify someone to run the command on')
-      return;
-    }
-    const discordName = targetUser.tag
+    targetUser = await Promise(promise);
+    const discordid = targetUser.id 
+    console.log(discordid)
+
+
+    const IDs = [discordid];
+    promise = IDs.map((userID) => {
+        return new Promise(async (resolve) => {
+            const member = message.guild.member(userID) || await message.guild.members.fetch(userID);
+            resolve(member.displayName || member.user.username);
+        });
+    });
+    const discordName = await Promise.all(promise);
     var inDB = false;
     try
     {
@@ -71,9 +83,9 @@ module.exports = {
           var fenceR = guild.roles.cache.find((role) => {
             return role.name === 'On the Fence'
           });
-        member.roles.add(rankR);
-        member.roles.add(memberR);
-        member.roles.remove(fenceR);
+          member.roles.add(rankR);
+          member.roles.add(memberR);
+          member.roles.remove(fenceR);
         }catch(e)
         {
           console.log(e)

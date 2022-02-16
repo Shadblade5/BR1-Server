@@ -43,11 +43,18 @@ async function getdbid(DiscordID){
       result = 'None'
       throw('Failed to query DBID')
     }
+    if(result[0] == undefined)
+    {
+      return undefined
+    }
+    else
+    {
     return result[0].DBID;
+    }
   }
 
 async function addUser(discordName,DiscordID,TeamspeakID='',rank,DBID=-1){
-  const sql = 'INSERT INTO master VALUES ('+connection.escape(discordName)+', '+connection.escape(DiscordID)+', '+connection.escape(TeamspeakID)+', '+connection.escape(rank)+', '+connection.escape(DBID)+')';
+  const sql = 'INSERT INTO master VALUES ('+connection.escape(discordName)+', '+connection.escape(DiscordID)+', '+connection.escape(rank)+', '+connection.escape(DBID)+')';
     try
     {
       var result = await query(sql);
@@ -82,7 +89,14 @@ async function getRank(DiscordID){
     result = 'None'
     throw('Failed to query Rank')
   }
+  if(result[0] == undefined)
+  {
+    return undefined
+  }
+  else
+  {
   return result[0].Rank;
+  }
 }
 
 async function getCerts(DiscordID){

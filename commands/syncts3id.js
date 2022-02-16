@@ -21,18 +21,20 @@ module.exports = {
     {
         message.reply("You are already synced");
     }
+    else 
+    if(clientdbid==undefined)
+    {
+        message.reply("You have not been added to the unit database"); 
+    }
     else
     {
         var synced = false;
-        console.log(lobbyclients)
         for(i=0;i<lobbyclients.length;i++)
         {
             if(clientdbid == lobbyclients[i].propcache.clientDatabaseId)
             {
                 if(lobbyclients[i].propcache.clientPlatform != 'ServerQuery')
                 {
-                    console.log("Nickname: ")
-                    console.log(lobbyclients[i].propcache.clientNickname)
                     synced = true;
                     break;
                 }
@@ -49,7 +51,6 @@ module.exports = {
                 });
             });
             const discordname = await Promise.all(promise);
-            console.log(discordname)
             for(i=0;i<lobbyclients.length;i++)
             {
 
