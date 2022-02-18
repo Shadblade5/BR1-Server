@@ -25,7 +25,7 @@ async function connectToSQLServer(){
     await console.log('MySQL server Connected!');
     connected = true
   }catch (e){
-    throw('SQL server connection failed.')
+    console.log('SQL server connection failed.');
     console.log(e)
     connected = false
   }finally{

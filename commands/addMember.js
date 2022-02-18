@@ -39,13 +39,13 @@ module.exports = {
     //   message.reply('Please specify someone to run the command on')
     //   return;
     // }
-    
-        var promise = new Promise(async (resolve) => {
-          const member = message.mentions.users.first() || await guild.members.cache.get(arguments[0])
-            resolve(member || member.user);
-        });
+    //TODO: Fix Arugment handler
+      var promise = new Promise(async (resolve) => {
+        const member = message.mentions.users.first() || await guild.members.cache.get(arguments[0])
+          resolve(member || member.user);
+      });
 
-    targetUser = await Promise(promise);
+    targetUser = await Promise.resolve(promise);
     const discordid = targetUser.id 
     console.log(discordid)
 
@@ -72,7 +72,7 @@ module.exports = {
       if(!inDB)
       {
 
-        //TODO Give Unitmember and PVT Discord Roles
+        //Give Unitmember and PVT Discord Roles
         try{
           var rankR = guild.roles.cache.find((role) => {
             return role.name === 'Private'
