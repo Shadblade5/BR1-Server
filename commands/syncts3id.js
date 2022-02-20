@@ -16,7 +16,7 @@ module.exports = {
     var lobbyclients = [];
     lobbyclients = await ts3.getLobbyClients();
     var clientdbid 
-    clientdbid = await sql.getdbid(discordid);
+    clientdbid = await sql.getDBID(discordid);
     if(clientdbid>0)
     {
         message.reply("You are already synced");

@@ -33,6 +33,12 @@ const clientListFromSGID = async (sgid) =>
   return teamspeak.serverGroupClientList(sgid);
 }
 
+async function getServerGroupsFromDBID(dbid)
+{
+  var servergroups = await teamspeak.serverGroupsByClientId(112);
+  return servergroups
+}
+
 async function addClientServerGroup(dbid,sgid)
 {
  try{
@@ -85,5 +91,6 @@ module.exports = {
   removeClientServerGroup,
   getservergroupclients,
   getclientdbid,
-  getLobbyClients
+  getLobbyClients,
+  getServerGroupsFromDBID
 };

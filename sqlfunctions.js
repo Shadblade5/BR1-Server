@@ -33,26 +33,6 @@ async function connectToSQLServer(){
   }
 }
 
-async function getdbid(DiscordID){
-    const qts3 = 'SELECT DBID FROM master WHERE DiscordID = '+connection.escape(DiscordID);
-    try{
-      var result = await query(qts3);
-    }catch(e)
-    {
-      console.log(e)
-      result = 'None'
-      throw('Failed to query DBID')
-    }
-    if(result[0] == undefined)
-    {
-      return undefined
-    }
-    else
-    {
-    return result[0].DBID;
-    }
-  }
-
 async function addUser(discordName,DiscordID,rank,DBID=-1){
   const sql = 'INSERT INTO master VALUES ('+connection.escape(discordName)+', '+connection.escape(DiscordID)+', '+connection.escape(rank)+', '+connection.escape(DBID)+')';
     try
@@ -147,6 +127,18 @@ async function updateDBID(DiscordID,DBID){
   return result;
 }
 
+async function getDBID(DiscordID){
+  try{
+  const qDBID = 'SELECT DBID FROM master WHERE DiscordID = '+connection.escape(DiscordID);
+  var result = await query(qDBID);
+  }catch(e){
+    console.log(e)
+    result = 'None'
+    throw("Failed to update DBID")
+  }
+  return result[0].DBID;
+}
+
 async function updateRank(DiscordID,rank){
   try{
   const urank = 'UPDATE master SET Rank = '+connection.escape(rank)+' WHERE DiscordID = '+ connection.escape(DiscordID);
@@ -171,9 +163,46 @@ async function addCert(DiscordID,cert){
   return result;
 }
 
+async function addrole(DiscordID,RSQLID){
+  try{
+  const qrole = 'INSERT INTO roles (DiscordID, RSQLID) VALUES ('+connection.escape(DiscordID)+', '+ connection.escape(RSQLID)+')';
+  var result = await query(qrole);
+  }catch(e){
+    //console.log(e)
+    result = 'None'
+    throw("Failed to add role to DB")
+  }
+  return result;
+}
+
+async function removerole(DiscordID,RSQLID){
+  try{
+  const qrole = 'DELETE FROM certifications WHERE DiscordID = '+connection.escape(DiscordID)+' AND RSQLID = '+ connection.escape(RSQLID);
+  var result = await query(qrole);
+  }catch(e){
+    //console.log(e)
+    result = 'None'
+    throw("Failed to add role to DB")
+  }
+  return result;
+}
+
+async function getRSQLID(TSGRPID){
+  try
+  {
+  const qRSQLID = 'SELECT RSQLID FROM rolesdb WHERE TSGRPID = '+connection.escape(TSGRPID);
+  var result = await query(qRSQLID);
+    if(result[0]==undefined)
+      throw("RSQLID does not exist in DB")
+    return result[0].RSQLID;
+  }catch(e){
+    console.log(e)
+  }
+}
+
 async function removeCert(DiscordID,cert){
   try{
-  const rcert = 'DELETE FROM certifications WHERE DiscordID = '+ connection.escape(DiscordID)+'AND Certification = '+ connection.escape(cert);
+  const rcert = 'DELETE FROM certifications WHERE DiscordID = '+ connection.escape(DiscordID)+' AND Certification = '+ connection.escape(cert);
   var result = await query(rcert);
   }catch(e){
     console.log(e)
@@ -270,5 +299,8 @@ module.exports = {
   fillrole,
   updateDBID,
   querydb,
-  getdbid
+  getDBID,
+  addrole,
+  removerole,
+  getRSQLID
 };
