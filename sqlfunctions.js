@@ -53,7 +53,7 @@ async function getdbid(DiscordID){
     }
   }
 
-async function addUser(discordName,DiscordID,TeamspeakID='',rank,DBID=-1){
+async function addUser(discordName,DiscordID,rank,DBID=-1){
   const sql = 'INSERT INTO master VALUES ('+connection.escape(discordName)+', '+connection.escape(DiscordID)+', '+connection.escape(rank)+', '+connection.escape(DBID)+')';
     try
     {
@@ -164,7 +164,7 @@ async function addCert(DiscordID,cert){
   const icert = 'INSERT INTO certifications (DiscordID, Cert) VALUES ('+connection.escape(DiscordID)+', '+ connection.escape(cert)+')';
   var result = await query(icert);
   }catch(e){
-    console.log(e)
+    //console.log(e)
     result = 'None'
     throw("Failed to add cert")
   }
@@ -213,7 +213,6 @@ async function getDiscordIDs(){
   const rDiscordID = 'SELECT DiscordID FROM master';
   var result = await query(rDiscordID);
   }catch(e){
-    console.log(e)
     result = 'None'
     throw("Failed to get IDs")
   }
@@ -223,7 +222,7 @@ async function getDiscordIDs(){
 
 async function fillrole(DISCORDRID=0,TSGRPID=NULL,GRPTYPE=" ",NAME=" ",ABBR=" "){
   try{
-    const fillrole = 'INSERT INTO roles (SQLID, DiscordRID, TSGRPID, GRPTYPE, Name, ABBR) VALUES (DEFAULT, '+ connection.escape(DISCORDRID)+', '+ connection.escape(TSGRPID)+', '+ connection.escape(GRPTYPE)+', '+ connection.escape(NAME)+', '+ connection.escape(ABBR)+')';
+    const fillrole = 'INSERT INTO roles (RSQLID, DiscordRID, TSGRPID, GRPTYPE, Name, ABBR) VALUES (DEFAULT, '+ connection.escape(DISCORDRID)+', '+ connection.escape(TSGRPID)+', '+ connection.escape(GRPTYPE)+', '+ connection.escape(NAME)+', '+ connection.escape(ABBR)+')';
     var result = await query(fillrole);
     }catch(e){
       console.log(e)

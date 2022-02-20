@@ -10,53 +10,31 @@ module.exports = {
   callback: async(message, arguments, text) => {
 
     const { guild } = message
-    var member
-    var targetUser
-    var memberID
-    var wrongargs=false;
-    try{
-      targetUser = message.mentions.users.first()
-      member = guild.members.cache.get(targetUser.id)
-      memberID = targetUser.id
-      var wrongargs=false;
-    }catch(e){
-      //console.log(e);
-      var wrongargs=true;
-    }
-      if(wrongargs)
-      {
-        try{
-          memberID = arguments[0]
-          member = guild.members.cache.get(memberID)
-          targetUser = member.user
-          var wrongargs=false;
-        }catch(e){
-          //console.log(e);
-          var wrongargs=true;
-        }
-      }
-    if(wrongargs){
-      message.reply('Please specify someone to run the command on')
+    var gmember
+    var discordid
+    var ggmember
+    ggmember = message.guild.gmember(message.mentions.users.first() || bot.client.users.cache.find(user => user.id === arguments[0]))
+    if(!ggmember)
+    {
+      message.reply("Please provide a valid @mention or discordID of the target gmember.")
       return;
     }
-
+    discordid = ggmember.id;
+    displayName = ggmember.displayName || ggmember.user.username;
 
 
     arguments.shift()
-    var role
-    var oldrole
-    //var currentAuthorRankabbr
     var currentRank = ' '
     var currentRankabbr
-    var authorUser = guild.members.cache.get(message.author.id)
-    if(memberID == authorUser.id && memberID != 208119044308467712)
+    var authorUser = guild.gmembers.cache.get(message.author.id)
+    if(discordid == authorUser.id && discordid != 208119044308467712)
     {
       message.reply(`You cannot rank yourself up.`)
       return
     }
 
     try{
-      currentRankabbr = await sql.getRank(memberID)
+      currentRankabbr = await sql.getRank(discordid)
       currentAuthorRankabbr = await sql.getRank(authorUser.id)
       //var ts3uid = await sql.getTs3
     }catch(e){
@@ -77,7 +55,7 @@ module.exports = {
 
     const maxrank = 13;
     if(numRank == maxrank){
-      message.reply(`${targetUser.tag} cannot be ranked up further`)
+      message.reply(`${discordName} cannot be ranked up further`)
       return
     }
 
@@ -99,20 +77,20 @@ module.exports = {
       var SNCO = guild.roles.cache.find((role) => {
         return role.name === "Senior-NCO"
       });
-        await sql.updateRank(memberID,newrankabbr)
+        await sql.updateRank(discordid,newrankabbr)
 
-        member.roles.add(Nrank)
-        member.roles.remove(Orank)
+        gmember.roles.add(Nrank)
+        gmember.roles.remove(Orank)
         if((numRank+1)>7&&(numRank+1)<10)
         {
-          member.roles.add(NCO);
+          gmember.roles.add(NCO);
         }
         if((numRank+1)>10)
         {
-          member.roles.remove(NCO);
-          member.roles.add(SNCO);
+          gmember.roles.remove(NCO);
+          gmember.roles.add(SNCO);
         }
-        message.reply(`${targetUser.tag} now has the rank ${newrank}`)
+        message.reply(`${displayName} now has the rank ${newrank}`)
       return;
 
   },

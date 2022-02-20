@@ -40,34 +40,27 @@ module.exports =
         
         if (member.roles.cache.has(unitmemberroleid)) 
         {
-          var memberID
-          var discordname
+          var discordid
+          var displayName
           var inDB = false;
           var rank = 'PVT'
           var cert = ' '
+          discordid = member.id;
+          displayName = member.displayName || member.user.username;
 
-          memberID = member.user.id
-          const IDs = [memberID];
-          const promise = IDs.map((userID) => {
-              return new Promise(async (resolve) => {
-                  const member = message.guild.member(userID) || await message.guild.members.fetch(userID);
-                  resolve(member.displayName || member.user.username);
-              });
-          });
-          discordname = await Promise.all(promise);
 
           try
           {
             await sqlids.forEach(async id => 
               {
-              if(memberID==id.DiscordID){
+              if(discordid==id.DiscordID){
                 inDB=true;
               }
             })
             if(!inDB)
             {
               count = count+1;
-              await sql.addUser(discordname,memberID,teamspeakID=' ',rank)
+              await sql.addUser(displayName,discordid,teamspeakID=' ',rank)
             }
           }catch(e)
           {
@@ -84,7 +77,8 @@ module.exports =
                 rank = ranks.abbr[j]
                 try{
                   
-                  await sql.updateRank(memberID,rank)             
+                  await sql.updateRank(discordid,rank)    
+                  console.log(`${displayName} Rank: ${rank}`)        
                 }catch(e)
                 {
                 console.error(e)
@@ -97,17 +91,16 @@ module.exports =
             {
               if(role.id == certs.discordid[j])
               {
-                console.log(`Member:${discordname} J:${j} cert: ${cert}`)
                 cert = certs.abbr[j]
-
+                console.log(`Member:${displayName} J:${j} cert: ${cert}`)
                 //TODO: Check if array is empty/undefined
                 try
                 {
-                  await sql.addCert(memberID,cert)
-                  //console.log(`${discordname} was assigned the cert ${cert}\n`)
+                  await sql.addCert(discordid,cert)
+                  console.log(`${displayName} was assigned the cert ${cert}\n`)
                 }catch(e)
                 {
-                  console.error(e)
+                  //console.error(e)
                 }
               }
             }
@@ -124,6 +117,6 @@ module.exports =
     
   },
   permissions: '',
-  description:'Updates the SQL DB with ranks, certs and awards',
+  description:'Updates the SQL DB with ranks, certs based on the discord.',
   requiredRoles: ['Officer'],
 }

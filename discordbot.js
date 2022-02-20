@@ -93,4 +93,5 @@ client.login(config.token);
   module.exports = {
   getStringDiff,
   sleep,
+  client
   }

@@ -10,7 +10,7 @@ module.exports = {
   expectedArgs: '',
   permissionError: 'You need admin permissions to run this command',
   minArgs: 0,
-  maxArgs: 1,
+  maxArgs: 0,
   callback: async(message, arguments, text) => {
     var discordid = message.author.id;
     var lobbyclients = [];
@@ -79,6 +79,6 @@ module.exports = {
     }
   },
   permissions: '',
-  description:'Syncs your discord ID to your Teamspeak ID. Requires you to be in the lobby in TS3',
-  requiredRoles: ['Officer'],
+  description:'Syncs your discord ID to your Teamspeak ID. Requires you to be in the lobby in TS3 and have the same name in Discord and Teamspeak (remove emotes).',
+  requiredRoles: ['Officer','Admin-NCO'],
 }
