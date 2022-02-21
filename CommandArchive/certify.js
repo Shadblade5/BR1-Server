@@ -1,5 +1,6 @@
 const sql = require('../sqlfunctions')
 const certs = require('../info/certs.json')
+const bot = require('../discordbot')
 module.exports = {
   commands: ['certify'],
   expectedArgs: '<@user/ID> <certification>',
@@ -9,35 +10,21 @@ module.exports = {
   callback: async(message, arguments, text) => {
 
     const { guild } = message
-    var member;
-    var targetUser;
-    var memberID;
-    var wrongargs=false;
     var role;
-    try{
-      targetUser = message.mentions.users.first()
-      member = guild.members.cache.get(targetUser.id)
-      memberID = targetUser.id
-      var wrongargs=false;
-    }catch(e){
-      //console.log(e);
-      var wrongargs=true;
-    }
-      if(wrongargs){
-        try{
-          memberID = arguments[0]
-          member = guild.members.cache.get(memberID)
-          targetUser = member.user
-          var wrongargs=false;
-        }catch(e){
-          //console.log(e);
-          var wrongargs=true;
-        }
-      }
-    if(wrongargs){
-      message.reply('Please specify someone to run the command on')
+
+    var discordid;
+    var member;
+    var displayName;
+    
+    member = message.guild.member(message.mentions.users.first() || bot.client.users.cache.find(user => user.id === arguments[0]))
+    if(!member)
+    {
+      message.reply("Please provide a valid @mention or discordID of the target member.")
       return;
     }
+    discordid = member.id;
+    displayName = member.displayName || member.user.username;
+    
 
 
     arguments.shift()
@@ -52,7 +39,7 @@ module.exports = {
       var currentCerts = []
       var currentCertnum
       // try{
-      //     certabbr = await sql.getCerts(memberID)
+      //     certabbr = await sql.getCerts(discordid)
       //     certabbr.forEach((element,i) => {
       //     currentCerts[i] = element.Cert.toString();});
       //     currentCertnum = currentCerts.indexOf(abbr)
@@ -61,12 +48,12 @@ module.exports = {
       //   console.log(e)
       // }
       if(0<=currentCertnum){
-        message.reply(`${targetUser.tag} already has the ${certName} Certification.`)
+        message.reply(`${displayName} already has the ${certName} Certification.`)
         return;
       }else{
         try{
-          //await sql.addCert(memberID,certabbr)
-          message.reply(`${targetUser.tag} has been certified for ${certName}.`)
+          //await sql.addCert(discordid,certabbr)
+          message.reply(`${displayName} has been certified for ${certName}.`)
           role = guild.roles.cache.find((role) => {
             message.reply(numCert +" " + certs.discordid[numCert]);
             return role.id === certs.discordid[numCert];

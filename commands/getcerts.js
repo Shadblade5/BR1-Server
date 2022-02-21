@@ -1,8 +1,7 @@
 const sql = require('../sqlfunctions')
-const medals = require('../info/medals.json')
 const bot = require('../discordbot')
 module.exports = {
-  commands: ['getawards'],
+  commands: ['getcerts'],
   expectedArgs: '<@user/ID>',
   permissionError: 'You need admin permissions to run this command',
   minArgs: 1,
@@ -23,23 +22,23 @@ module.exports = {
     }
     discordid = member.id;
     displayName = member.displayName || member.user.username;
+    //code starts here
 
 
-
-    var currentawards
+    var currentcerts
     try{
-      currentawards = await sql.getMedals(discordid)
-      for(var i=0;i<currentawards.length;i++){
-        currentawards[i] = ' '+medals.name[medals.abbr.indexOf(currentawards[i].Medal.toString())]
+      currentcerts = await sql.getCerts(discordid)
+      for(var i=0;i<currentcerts.length;i++){
+        currentcerts[i] = currentcerts[i].Cert.capitalize()+' ';
       }
-          message.reply(`${displayName} has the following awards:\n ${currentawards}`)
+          message.reply(`${displayName} has the following certs:\n ${currentcerts}`)
     }catch(e){
-      message.reply(`Failed to get ${displayName}'s awards.'`)
+      message.reply(`Failed to get ${displayName}'s certs.`)
       console.log(e);
     }
 
   },
   permissions: '',
-  description:'Gets the current awards of the User.',
+  description:'Gets the current certs of the User.',
   requiredRoles: ['Unit Member'],
 }

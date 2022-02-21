@@ -1,5 +1,5 @@
 const sql = require('../sqlfunctions')
-const awards = require('../info/awards.json')
+const bot = require('../discordbot')
 module.exports = {
   commands: ['award'],
   expectedArgs: '<@user/ID> <award>',
@@ -9,35 +9,29 @@ module.exports = {
   callback: async(message, arguments, text) => {
 
     const { guild } = message
-    var member
-    var targetUser
-    var memberID
-    var wrongargs=false;
-    try{
-      targetUser = message.mentions.users.first()
-      member = guild.members.cache.get(targetUser.id)
-      memberID = targetUser.id
-      var wrongargs=false;
-    }catch(e){
-      //console.log(e);
-      var wrongargs=true;
-    }
-      if(wrongargs){
-        try{
-          memberID = arguments[0]
-          member = guild.members.cache.get(memberID)
-          targetUser = member.user
-          var wrongargs=false;
-        }catch(e){
-          //console.log(e);
-          var wrongargs=true;
-        }
-      }
-    if(wrongargs){
-      message.reply('Please specify someone to run the command on')
+    var awards;
+
+    var discordid;
+    var member;
+    var displayName;
+    
+    member = message.guild.member(message.mentions.users.first() || bot.client.users.cache.find(user => user.id === arguments[0]))
+    if(!member)
+    {
+      message.reply("Please provide a valid @mention or discordID of the target member.")
       return;
     }
-
+    discordid = member.id;
+    displayName = member.displayName || member.user.username;
+    
+    try
+    {
+      awards = sql.getAwardsDB();
+    }
+    catch(e)
+    {
+      console.log(e)
+    }
 
     arguments.shift()
     const award = arguments[0].toUpperCase()
@@ -50,7 +44,7 @@ module.exports = {
       var currentAwards = []
       var currentAwardNum
       try{
-          currentAwardsSql = await sql.getAwards(memberID)
+          currentAwardsSql = await sql.getAwards(discordid)
           currentAwardsSql.forEach((element,i) => {
           currentAwards[i] = element.Award.toString();
         });
@@ -61,12 +55,12 @@ module.exports = {
         console.log(e)
       }
       if(0<currentAwardNum){
-        message.reply(`${targetUser.tag} already has the ${awardname} award.`)
+        message.reply(`${displayName} already has the ${awardname} award.`)
         return;
       }else{
         try{
-          await sql.addAward(targetUser.id,award)
-          message.reply(`${targetUser.tag} has been awarded the ${awardname} award.`)
+          await sql.addAward(discordid,award)
+          message.reply(`${displayName} has been awarded the ${awardname} award.`)
         }catch(e){
           console.log(e)
           message.reply(e)

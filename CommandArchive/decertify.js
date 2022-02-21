@@ -1,5 +1,6 @@
 const sql = require('../sqlfunctions')
 const certs = require('../info/certs.json')
+const bot = require('../discordbot')
 module.exports = {
   commands: ['decertify'],
   expectedArgs: '<@user/ID> <certification>',
@@ -9,34 +10,19 @@ module.exports = {
   callback: async(message, arguments, text) => {
 
     const { guild } = message
+    
     var member
-    var targetUser
-    var memberID
-    var wrongargs=false;
-    try{
-      targetUser = message.mentions.users.first()
-      member = guild.members.cache.get(targetUser.id)
-      memberID = targetUser.id
-      var wrongargs=false;
-    }catch(e){
-      //console.log(e);
-      var wrongargs=true;
-    }
-      if(wrongargs){
-        try{
-          memberID = arguments[0]
-          member = guild.members.cache.get(memberID)
-          targetUser = member.user
-          var wrongargs=false;
-        }catch(e){
-          //console.log(e);
-          var wrongargs=true;
-        }
-      }
-    if(wrongargs){
-      message.reply('Please specify someone to run the command on')
+    var discordid;
+    var displayName;
+    
+    member = message.guild.member(message.mentions.users.first() || bot.client.users.cache.find(user => user.id === arguments[0]))
+    if(!member)
+    {
+      message.reply("Please provide a valid @mention or discordID of the target member.")
       return;
     }
+    discordid = member.id;
+    displayName = member.displayName || member.user.username;
 
     arguments.shift()
     const cert = arguments[0].toLowerCase()
@@ -53,7 +39,7 @@ module.exports = {
       var currentCerts = []
       var currentCertnum
       try{
-          currentCertsSql = await sql.getCerts(targetUser.id)
+          currentCertsSql = await sql.getCerts(discordid)
           currentCertsSql.forEach((element,i) => {
           currentCerts[i] = element.Certification.toString();
         });
@@ -63,12 +49,12 @@ module.exports = {
         console.log(e)
       }
       if(0>=currentCertnum){
-        message.reply(`${targetUser.tag} does not have the ${certName.capitalize()} Certification.`)
+        message.reply(`${displayName} does not have the ${certName.capitalize()} Certification.`)
         return;
       }else{
         try{
-          await sql.removeCert(targetUser.id,cert)
-          message.reply(`${targetUser.tag} has been decertified for ${certName.capitalize()}.`)
+          await sql.removeCert(discordid,cert)
+          message.reply(`${displayName} has been decertified for ${certName.capitalize()}.`)
         }catch(e){
           console.log(e)
           message.reply(e)

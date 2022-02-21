@@ -9,43 +9,18 @@ module.exports = {
   callback: async(message, arguments, text) => {
 
     const { guild } = message
+    var discordid
     var member
-    var targetUser
-    var memberID;
-    var wrongargs=false;
-    try
+    var displayName
+    member = message.guild.gmember(message.mentions.users.first() || bot.client.users.cache.find(user => user.id === arguments[0]))
+    if(!member)
     {
-      targetUser = message.mentions.users.first()
-      member = guild.members.cache.get(targetUser.id)
-      memberID = targetUser.id
-      var wrongargs=false;
-    }catch(e)
-    {
-      var wrongargs=true;
-    }
-    if(wrongargs)
-    {
-      try
-      {
-        memberID = arguments[0]
-        member = guild.members.cache.get(memberID)
-        targetUser = member.user
-        var wrongargs=false;
-      }catch(e)
-      {
-        //console.log(e);
-        var wrongargs=true;
-      }
-    }
-    if(wrongargs)
-    {
-      message.reply('Please specify someone to run the command on')
+      message.reply("Please provide a valid @mention or discordID of the target gmember.")
       return;
     }
-    //TESTING
-    memberID = 742529349697142845;
-    member = guild.members.cache.get(memberID);
-    targetUser = member.user;
+    discordid = member.id;
+    displayName = member.displayName || member.user.username;
+
     //TESTING
     arguments.shift()
     arguments[0] = arguments[0].toUpperCase()
@@ -56,7 +31,7 @@ module.exports = {
     var currentRank;
     var newnumRank;
     var authorUser = guild.members.cache.get(message.author.id)
-    if(memberID == authorUser.id && memberID != 208119044308467712)
+    if(discordid == authorUser.id && discordid != 208119044308467712)
     {
       message.reply(`You cannot rank yourself up.`)
       return;
@@ -64,7 +39,7 @@ module.exports = {
 
     try
     {
-      currentRankabbr = await sql.getRank(memberID)
+      currentRankabbr = await sql.getRank(discordid)
       currentAuthorRankabbr = await sql.getRank(authorUser.id)
     }catch(e)
     {
@@ -91,7 +66,7 @@ module.exports = {
 
     if(newrank===currentRankabbr||newrank===ranks.name[ranks.abbr.indexOf(currentRankabbr)])
     {
-      message.reply(`${targetUser.tag} is already the rank of ${currentRank}`)
+      message.reply(`${displayName} is already the rank of ${currentRank}`)
       return;
     }
 
@@ -130,7 +105,7 @@ module.exports = {
 
     try
     {
-      await sql.updateRank(memberID,newrankabbr)
+      await sql.updateRank(discordid,newrankabbr)
       console.log(newnumRank)
       member.roles.add(Nrank)
       member.roles.remove(Orank)
@@ -176,8 +151,8 @@ module.exports = {
         member.roles.remove(NCO);
         member.roles.remove(SNCO);
       }
-    await sql.updateRank(memberID,newrankabbr)
-    message.reply(`${targetUser.tag} now has the rank ${newrank}`)
+    await sql.updateRank(discordid,newrankabbr)
+    message.reply(`${displayName} now has the rank ${newrank}`)
     }
     catch(e)
     {
