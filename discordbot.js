@@ -10,8 +10,8 @@ async function restart() {
   while (true) {
     fs.readFile('C:/actions-runner/restartflag.json', (err, data) => {
       var restart = JSON.parse(data);
-      console.log("Restart Flag: " + restart.flag);
       if (restart.flag) {
+        console.log("Restart Flag: " + restart.flag);
         process.exit(1);
       }
     });
@@ -63,7 +63,7 @@ function sleep(ms) {
 
 client.on('ready', async () => {
   console.log('Discord client has started')
-  await sleep(3000)
+  //await sleep(3000)
 
     try{
       await sql.connectToSQLServer()

@@ -2,6 +2,7 @@ const sql = require('../sqlfunctions')
 const certs = require('../info/certs.json')
 const awards = require('../info/awards.json')
 const ranks = require('../info/ranks.json')
+const bot = require('../discordbot')
 module.exports = {
   commands: ['getuserinfo'],
   expectedArgs: '<@user/ID>',
@@ -12,17 +13,17 @@ module.exports = {
 
     const { guild } = message
     var discordid;
-    var gmember;
+    var member;
     var displayName
 
-    gmember = message.guild.member(message.mentions.users.first() || bot.client.users.cache.find(user => user.id === arguments[0]))
-    if(!gmember)
+    member = message.guild.member(message.mentions.users.first() || bot.client.users.cache.find(user => user.id === arguments[0]))
+    if(!member)
     {
       message.reply("Please provide a valid @mention or discordID of the target member.")
       return;
     }
-    discordid = gmember.id;
-    displayName = gmember.displayName || gmember.user.username;
+    discordid = member.id;
+    displayName = member.displayName || member.user.username;
 
     var currentcerts
     var currentawards

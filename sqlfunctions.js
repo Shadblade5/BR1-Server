@@ -131,12 +131,20 @@ async function getDBID(DiscordID){
   try{
   const qDBID = 'SELECT DBID FROM master WHERE DiscordID = '+connection.escape(DiscordID);
   var result = await query(qDBID);
+  if(!result)
+    throw('Member is not synced on TS3')
   }catch(e){
     console.log(e)
     result = 'None'
-    throw("Failed to update DBID")
+    throw("Failed to get DBID")
   }
+  try{
   return result[0].DBID;
+  }
+  catch(e)
+  {
+    return undefined;
+  }
 }
 
 async function updateRank(DiscordID,rank){
@@ -187,14 +195,26 @@ async function removerole(DiscordID,RSQLID){
   return result;
 }
 
-async function getRSQLID(TSGRPID){
+async function getRSQLID(SGID){
   try
   {
-  const qRSQLID = 'SELECT RSQLID FROM rolesdb WHERE TSGRPID = '+connection.escape(TSGRPID);
-  var result = await query(qRSQLID);
+    const qRSQLID = 'SELECT RSQLID FROM rolesdb WHERE SGID = '+connection.escape(SGID);
+    var result = await query(qRSQLID);
     if(result[0]==undefined)
       throw("RSQLID does not exist in DB")
     return result[0].RSQLID;
+  }catch(e){
+    console.log(e)
+  }
+}
+
+
+async function getawardsdb(){
+  try
+  {
+    const qRSQLID = 'SELECT * FROM `rolesdb` WHERE `GRPTYPE` = \'AWARD\'';
+    var result = await query(qRSQLID);
+    return result;
   }catch(e){
     console.log(e)
   }
@@ -249,9 +269,9 @@ async function getDiscordIDs(){
 }
 
 
-async function fillrole(DISCORDRID=0,TSGRPID=NULL,GRPTYPE=" ",NAME=" ",ABBR=" "){
+async function fillrole(DISCORDRID=0,SGID=NULL,GRPTYPE=" ",NAME=" ",ABBR=" "){
   try{
-    const fillrole = 'INSERT INTO roles (RSQLID, DiscordRID, TSGRPID, GRPTYPE, Name, ABBR) VALUES (DEFAULT, '+ connection.escape(DISCORDRID)+', '+ connection.escape(TSGRPID)+', '+ connection.escape(GRPTYPE)+', '+ connection.escape(NAME)+', '+ connection.escape(ABBR)+')';
+    const fillrole = 'INSERT INTO roles (RSQLID, DiscordRID, SGID, GRPTYPE, Name, ABBR) VALUES (DEFAULT, '+ connection.escape(DISCORDRID)+', '+ connection.escape(SGID)+', '+ connection.escape(GRPTYPE)+', '+ connection.escape(NAME)+', '+ connection.escape(ABBR)+')';
     var result = await query(fillrole);
     }catch(e){
       console.log(e)
@@ -302,5 +322,6 @@ module.exports = {
   getDBID,
   addrole,
   removerole,
-  getRSQLID
+  getRSQLID,
+  getawardsdb
 };

@@ -10,17 +10,17 @@ module.exports = {
   callback: async(message, arguments, text) => {
 
     const { guild } = message
-    var gmember
     var discordid
-    var ggmember
-    ggmember = message.guild.gmember(message.mentions.users.first() || bot.client.users.cache.find(user => user.id === arguments[0]))
-    if(!ggmember)
+    var member
+    var displayName
+    member = message.guild.gmember(message.mentions.users.first() || bot.client.users.cache.find(user => user.id === arguments[0]))
+    if(!member)
     {
       message.reply("Please provide a valid @mention or discordID of the target gmember.")
       return;
     }
-    discordid = ggmember.id;
-    displayName = ggmember.displayName || ggmember.user.username;
+    discordid = member.id;
+    displayName = member.displayName || member.user.username;
 
 
     arguments.shift()
@@ -79,16 +79,16 @@ module.exports = {
       });
         await sql.updateRank(discordid,newrankabbr)
 
-        gmember.roles.add(Nrank)
-        gmember.roles.remove(Orank)
+        member.roles.add(Nrank)
+        member.roles.remove(Orank)
         if((numRank+1)>7&&(numRank+1)<10)
         {
-          gmember.roles.add(NCO);
+          member.roles.add(NCO);
         }
         if((numRank+1)>10)
         {
-          gmember.roles.remove(NCO);
-          gmember.roles.add(SNCO);
+          member.roles.remove(NCO);
+          member.roles.add(SNCO);
         }
         message.reply(`${displayName} now has the rank ${newrank}`)
       return;
@@ -96,6 +96,6 @@ module.exports = {
   },
   permissions: '',
   description:'Ranks the user up to the next rank.',
-  requiredRoles: ['Officer','Admin-NCO'],
+  requiredRoles: ['Officer'],
 
 }

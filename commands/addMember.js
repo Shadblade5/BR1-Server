@@ -13,17 +13,17 @@ module.exports = {
     var sqlids
     rank = 'PVT';
     var discordid;
-    var gmember;
+    var member;
     var displayName
 
-    gmember = message.guild.member(message.mentions.users.first() || bot.client.users.cache.find(user => user.id === arguments[0]))
-    if(!gmember)
+    member = message.guild.member(message.mentions.users.first() || bot.client.users.cache.find(user => user.id === arguments[0]))
+    if(!member)
     {
       message.reply("Please provide a valid @mention or discordID of the target member.")
       return;
     }
-    discordid = gmember.id;
-    displayName = gmember.displayName || gmember.user.username;
+    discordid = member.id;
+    displayName = member.displayName || member.user.username;
     
     var inDB = false;
     try
@@ -50,9 +50,9 @@ module.exports = {
           var fenceR = guild.roles.cache.find((role) => {
             return role.name === 'On the Fence'
           });
-          gmember.roles.add(rankR);
-          gmember.roles.add(memberR);
-          gmember.roles.remove(fenceR);
+          member.roles.add(rankR);
+          member.roles.add(memberR);
+          member.roles.remove(fenceR);
         }catch(e)
         {
           console.log(e)
@@ -75,5 +75,5 @@ module.exports = {
   },
   permissions: '',
   description:'Adds a new user to the Unit.',
-  requiredRoles: ['Officer','Admin-NCO','Senior-NCO','NCO'],
+  requiredRoles: ['Officer'],
 }

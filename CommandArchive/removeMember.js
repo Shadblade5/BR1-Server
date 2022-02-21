@@ -1,4 +1,5 @@
 const sql = require('../sqlfunctions')
+const bot = require('../discordbot')
 module.exports = {
   commands: ['removemember'],
 
@@ -12,44 +13,27 @@ module.exports = {
 
     const { guild } = message
     var member
-    var targetUser
-    var memberID
-    var wrongargs=false;
-    try{
-      targetUser = message.mentions.users.first()
-      member = guild.members.cache.get(targetUser.id)
-      memberID = targetUser.id
-      var wrongargs=false;
-    }catch(e){
-      //console.log(e);
-      var wrongargs=true;
-    }
-      if(wrongargs){
-        try{
-          memberID = arguments[0]
-          member = guild.members.cache.get(memberID)
-          targetUser = member.user
-          var wrongargs=false;
-        }catch(e){
-          //console.log(e);
-          var wrongargs=true;
-        }
-      }
-    if(wrongargs){
-      message.reply('Please specify someone to run the command on')
+    var discordid;
+    var member;
+    var displayName;
+    
+    member = message.guild.member(message.mentions.users.first() || bot.client.users.cache.find(user => user.id === arguments[0]))
+    if(!member)
+    {
+      message.reply("Please provide a valid @mention or discordID of the target member.")
       return;
     }
-    //
+    discordid = member.id;
+    displayName = member.displayName || member.user.username;
 
-    const discordName = targetUser.tag
-    const discordID = targetUser.id
+
     try{
-      
-    await sql.removeUser(discordName,discordID)
-    message.reply(`${discordName} was successfully removed from the database`)
+    await sql.removeUser(displayName,discordid)
+    message.reply(`${displayName} was successfully removed from the database`)
     }catch(e){
     message.reply(e)
     }
+    //discord remove?
   },
   permissions: '',
   description:'Removes a existing member from the Unit.',

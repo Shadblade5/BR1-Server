@@ -80,5 +80,5 @@ module.exports = {
   },
   permissions: '',
   description:'Syncs your discord ID to your Teamspeak ID. Requires you to be in the lobby in TS3 and have the same name in Discord and Teamspeak (remove emotes).',
-  requiredRoles: ['Officer','Admin-NCO'],
+  requiredRoles: ['Officer','Admin-NCO','Senior-NCO','NCO'],
 }
