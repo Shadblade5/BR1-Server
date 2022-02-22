@@ -79,42 +79,6 @@ async function getRank(DiscordID){
   }
 }
 
-async function getCerts(DiscordID){
-  const qcert = 'SELECT Cert FROM certifications WHERE DiscordID = '+ connection.escape(DiscordID);
-  try{
-  var result = await query(qcert);
-  }catch(e){
-    console.log(e)
-    result = 'None'
-    throw('Failed to query certs')
-  }
-  return result;
-}
-
-async function getAwards(DiscordID){
-  const qaward = 'SELECT Award FROM awards WHERE DiscordID = '+ connection.escape(DiscordID);
-  try{
-  var result = await query(qaward);
-  }catch(e){
-    console.log(e)
-    result = 'None'
-    throw('Failed to query awards')
-  }
-  return result;
-}
-
-async function updateTS3ID(DiscordID,TS3UID){
-  try{
-  const uidts3 = 'UPDATE master SET TeamspeakID = '+connection.escape(TS3UID)+' WHERE DiscordID = '+ connection.escape(DiscordID);
-  var result = await query(uidts3);
-  }catch(e){
-    console.log(e)
-    result = 'None'
-    throw("Failed to update TeamspeakID")
-  }
-  return result;
-}
-
 async function updateDBID(DiscordID,DBID){
   try{
   const qDBID = 'UPDATE master SET DBID = '+connection.escape(DBID)+' WHERE DiscordID = '+ connection.escape(DiscordID);
@@ -159,41 +123,7 @@ async function updateRank(DiscordID,rank){
   return result;
 }
 
-async function addCert(DiscordID,cert){
-  try{
-  const icert = 'INSERT INTO certifications (DiscordID, Cert) VALUES ('+connection.escape(DiscordID)+', '+ connection.escape(cert)+')';
-  var result = await query(icert);
-  }catch(e){
-    //console.log(e)
-    result = 'None'
-    throw("Failed to add cert")
-  }
-  return result;
-}
 
-async function addrole(DiscordID,RSQLID){
-  try{
-  const qrole = 'INSERT INTO roles (DiscordID, RSQLID) VALUES ('+connection.escape(DiscordID)+', '+ connection.escape(RSQLID)+')';
-  var result = await query(qrole);
-  }catch(e){
-    //console.log(e)
-    result = 'None'
-    throw("Failed to add role to DB")
-  }
-  return result;
-}
-
-async function removerole(DiscordID,RSQLID){
-  try{
-  const qrole = 'DELETE FROM certifications WHERE DiscordID = '+connection.escape(DiscordID)+' AND RSQLID = '+ connection.escape(RSQLID);
-  var result = await query(qrole);
-  }catch(e){
-    //console.log(e)
-    result = 'None'
-    throw("Failed to add role to DB")
-  }
-  return result;
-}
 
 async function getRSQLID(SGID){
   try
@@ -219,23 +149,40 @@ async function getawardsdb(){
     console.log(e)
   }
 }
-
-async function removeCert(DiscordID,cert){
-  try{
-  const rcert = 'DELETE FROM certifications WHERE DiscordID = '+ connection.escape(DiscordID)+' AND Certification = '+ connection.escape(cert);
-  var result = await query(rcert);
+async function getcertsdb(){
+  try
+  {
+    const qRSQLID = 'SELECT * FROM `rolesdb` WHERE `GRPTYPE` = \'CERT\'';
+    var result = await query(qRSQLID);
+    return result;
   }catch(e){
     console.log(e)
-    result = 'None'
-    throw("Failed to remove cert")
   }
-  return result;
+}
+async function getrolesdb(){
+  try
+  {
+    const qRSQLID = 'SELECT * FROM `rolesdb` WHERE `GRPTYPE` = \'ROLE\'';
+    var result = await query(qRSQLID);
+    return result;
+  }catch(e){
+    console.log(e)
+  }
+}
+async function getranksdb(){
+  try
+  {
+    const qRSQLID = 'SELECT * FROM `rolesdb` WHERE `GRPTYPE` = \'RANK\'';
+    var result = await query(qRSQLID);
+    return result;
+  }catch(e){
+    console.log(e)
+  }
 }
 
-
-async function addAward(DiscordID,award){
+async function addRole(DiscordID,RSQLID){
   try{
-  const iaward = 'INSERT INTO awards (DiscordID, Award) VALUES ('+connection.escape(DiscordID)+', '+ connection.escape(award)+')';
+  const iaward = 'INSERT INTO roles (DiscordID, RSQLID) VALUES ('+connection.escape(DiscordID)+', '+ connection.escape(RSQLID)+')';
   var result = await query(iaward);
   }catch(e){
     console.log(e)
@@ -245,9 +192,9 @@ async function addAward(DiscordID,award){
   return result;
 }
 
-async function removeAward(DiscordID,award){
+async function removeRole(DiscordID,RSQLID){
   try{
-  const raward = 'DELETE FROM awards WHERE DiscordID = '+ connection.escape(DiscordID)+'AND Award = '+ connection.escape(award);
+  const raward = 'DELETE FROM roles WHERE DiscordID = '+ connection.escape(DiscordID)+'AND RSQLID = '+ connection.escape(RSQLID);
   var result = await query(raward);
   }catch(e){
     console.log(e)
@@ -269,9 +216,9 @@ async function getDiscordIDs(){
 }
 
 
-async function fillrole(DISCORDRID=0,SGID=NULL,GRPTYPE=" ",NAME=" ",ABBR=" "){
+async function updateRole(DISCORDRID,SGID){
   try{
-    const fillrole = 'INSERT INTO roles (RSQLID, DiscordRID, SGID, GRPTYPE, Name, ABBR) VALUES (DEFAULT, '+ connection.escape(DISCORDRID)+', '+ connection.escape(SGID)+', '+ connection.escape(GRPTYPE)+', '+ connection.escape(NAME)+', '+ connection.escape(ABBR)+')';
+    const fillrole = 'UPDATE `rolesdb` SET `DiscordRID`= '+ connection.escape(DISCORDRID)+' WHERE SGID = '+ connection.escape(SGID);
     var result = await query(fillrole);
     }catch(e){
       console.log(e)
@@ -279,18 +226,21 @@ async function fillrole(DISCORDRID=0,SGID=NULL,GRPTYPE=" ",NAME=" ",ABBR=" "){
       throw("Failed to push roles")
     }
 }
-
-async function querydb(TYPE){
+async function getRoles(DiscordID){
+  const sql = 'SELECT master.DiscordName, master.DiscordID, master.Rank, rolesdb.NAME, rolesdb.ABBR, rolesdb.SGID, rolesdb.DiscordRID, rolesdb.GRPTYPE \n'
+  +'FROM master \n' 
+  +'JOIN roles \n'
+  +'ON master.DiscordID = '+ connection.escape(DiscordID)
+  +'\nJOIN rolesdb \n'
+  +'ON roles.RSQLID = rolesdb.RSQLID'
   try{
-    TYPE.toUpperCase()
-    var q = "SELECT * FROM `roles`"
-    // WHERE GRPTYPE = 'RANK'"
-  var result = await query(q);
-}catch(e){
-  console.log(e)
-  result = 'None'
-  throw("Failed to query DB")
-}
+  var result = await query(sql);
+  }catch(e){
+    console.log(e)
+    result = 'None'
+    throw(`Role acquisition failed for ${DiscordID}`)
+  }
+  return result;
 }
 
 async function query(sql){
@@ -304,24 +254,27 @@ async function query(sql){
 
 module.exports = {
   connectToSQLServer,
+
   getRank,
-  getCerts,
-  getAwards,
   updateRank,
-  addCert,
-  removeCert,
-  addAward,
-  removeAward,
+
+  addRole,
+  removeRole,
+  getRoles,
+
   addUser,
   removeUser,
+
   getDiscordIDs,
-  updateTS3ID,
-  fillrole,
+  
   updateDBID,
-  querydb,
   getDBID,
-  addrole,
-  removerole,
   getRSQLID,
-  getawardsdb
+
+  getawardsdb,
+  getcertsdb,
+  getrolesdb,
+  getranksdb,
+
+  updateRole
 };

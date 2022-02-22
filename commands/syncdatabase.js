@@ -1,8 +1,4 @@
 const sql = require('../sqlfunctions')
-const ranks = require('../info/ranks.json')
-const certs = require('../info/certs.json')
-const awards = require('../info/awards.json')
-
 module.exports = 
 {
   commands: ['syncDB'],
@@ -18,23 +14,33 @@ module.exports =
 
     message.reply("Starting Sync...\n");
     //first update all ranks and certs from discord
-
+    var unitmemberroleid
     var members
-    const unitmemberroleid = '728023335744831549'
     var sqlids
     var count =0;
+
     try
     {
       sqlids = await sql.getDiscordIDs()
+      awards = await sql.getawardsdb();
+      certs = await sql.getcertsdb();
+      roles = await sql.getrolesdb();
+      ranks = await sql.getranksdb();
     }catch(e)
     {
       console.error(e)
     }
+    
+    roles.forEach((role)=> {
+      if(role.ABBR=='UM')
+      {
+        unitmemberroleid =role.DiscordRID
+      }
+    })
+    console.log(unitmemberroleid)
     try
     {
-
       members = await guild.members.fetch()
-
       await members.forEach(async(member)=>  
       {
         
@@ -51,16 +57,17 @@ module.exports =
 
           try
           {
-            await sqlids.forEach(async id => 
+            await sqlids.forEach(async user => {
+              if(discordid==user.DiscordID)
               {
-              if(discordid==id.DiscordID){
                 inDB=true;
               }
             })
             if(!inDB)
             {
+              console.log("not in DB")
               count = count+1;
-              await sql.addUser(displayName,discordid,teamspeakID=' ',rank)
+              await sql.addUser(displayName,discordid,rank)
             }
           }catch(e)
           {
@@ -69,41 +76,12 @@ module.exports =
         
           await member.roles.cache.each( async(role) =>
           {
-             //update ranks
-            for(var j = 0;j<ranks.discordid.length;j++)
-            {
-              if(role.id == ranks.discordid[j])
-              {
-                rank = ranks.abbr[j]
-                try{
-                  
-                  await sql.updateRank(discordid,rank)    
-                  console.log(`${displayName} Rank: ${rank}`)        
-                }catch(e)
-                {
-                console.error(e)
-                }
-              }
-            }
-
-            //update certs
-            for(var j = 0;j<certs.discordid.length;j++)
-            {
-              if(role.id == certs.discordid[j])
-              {
-                cert = certs.abbr[j]
-                console.log(`Member:${displayName} J:${j} cert: ${cert}`)
-                //TODO: Check if array is empty/undefined
-                try
-                {
-                  await sql.addCert(discordid,cert)
-                  console.log(`${displayName} was assigned the cert ${cert}\n`)
-                }catch(e)
-                {
-                  //console.error(e)
-                }
-              }
-            }
+            for(var i = 0; i<ranks.length;i++)
+              if(role.id == ranks[i].DiscordRID)
+                sql.updateRank(discordid,ranks[i].ABBR)
+            for(var i = 0;i<certs.length;i++)
+              if(role.id == certs[i].DiscordRID)
+                sql.addRole(discordid,certs[i].RSQLID)
           })    
         }//end ifmember
       })//End Loop

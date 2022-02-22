@@ -35,7 +35,7 @@ const clientListFromSGID = async (sgid) =>
 
 async function getServerGroupsFromDBID(dbid)
 {
-  var servergroups = await teamspeak.serverGroupsByClientId(112);
+  var servergroups = await teamspeak.serverGroupsByClientId(dbid);
   return servergroups
 }
 

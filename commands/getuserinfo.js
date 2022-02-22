@@ -1,7 +1,5 @@
 const sql = require('../sqlfunctions')
-const certs = require('../info/certs.json')
-const awards = require('../info/awards.json')
-const ranks = require('../info/ranks.json')
+
 const bot = require('../discordbot')
 module.exports = {
   commands: ['getuserinfo'],
@@ -11,7 +9,10 @@ module.exports = {
   maxArgs: 1,
   callback: async(message, arguments, text) => {
 
-    const { guild } = message
+    var awards
+    var currentRank
+    var currentAwards
+
     var discordid;
     var member;
     var displayName
@@ -25,28 +26,13 @@ module.exports = {
     discordid = member.id;
     displayName = member.displayName || member.user.username;
 
-    var currentcerts
-    var currentawards
-    var currentRank
     try{
-      currentRank = await sql.getRank(discordid)
-      const numRank = ranks.abbr.indexOf(currentRank)
-      currentRank = ranks.name[numRank]
-      currentawards = await sql.getAwards(discordid)
-      currentcerts = await sql.getCerts(discordid)
-      for(var i=0;i<currentcerts.length;i++){
-        currentcerts[i] = certs.name[certs.abbr.indexOf(currentcerts[i].Cert.toString())] + ' '
-      }
-      for(var i=0;i<currentawards.length;i++){
-        currentawards[i] = awards.name[awards.abbr.indexOf(currentawards[i].Award.toString())] + ' '
-      }
-      message.reply(`Here is ${displayName} info:\nCurrent Rank:\n${currentRank}\nCurrent certs:\n${currentcerts}\nCurrent awards:\n${currentawards}\n`)
-
-    }catch(e){
-      message.reply(`Failed to get ${displayName}'s info.\n`)
-      console.log(e);
+      awards = await sql.getawardsdb();
     }
-       
+    catch(e){console.error(e)}
+    sql.getRoles()
+    message.reply(`Here is ${displayName} info:\nCurrent Rank:\n${currentRank}\nCurrent certs:\n${currentCerts}\nCurrent awards:\n${currentAwards}\n`)
+
 
   },
   permissions: '',
